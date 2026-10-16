@@ -1,0 +1,17 @@
+/* Pure, deterministic teaching algorithms. Binary classification only. */
+(function(root){
+'use strict';
+const tennis=[
+ ['Sunny','Hot','High','Weak',0],['Sunny','Hot','High','Strong',0],['Overcast','Hot','High','Weak',1],['Rain','Mild','High','Weak',1],['Rain','Cool','Normal','Weak',1],['Rain','Cool','Normal','Strong',0],['Overcast','Cool','Normal','Strong',1],['Sunny','Mild','High','Weak',0],['Sunny','Cool','Normal','Weak',1],['Rain','Mild','Normal','Weak',1],['Sunny','Mild','Normal','Strong',1],['Overcast','Mild','High','Strong',1],['Overcast','Hot','Normal','Weak',1],['Rain','Mild','High','Strong',0]
+].map((r,i)=>({x:r.slice(0,4),y:r[4],id:i+1}));
+const attributes=['Outlook','Temperature','Humidity','Wind'];
+function impurity(rows,criterion='entropy'){if(!rows.length)return 0;const p=rows.reduce((s,r)=>s+r.y,0)/rows.length;return criterion==='gini'?2*p*(1-p):p===0||p===1?0:-p*Math.log2(p)-(1-p)*Math.log2(1-p);}
+function categorical(rows,f){const groups={};rows.forEach(r=>(groups[r.x[f]]??=[]).push(r));const weighted=Object.values(groups).reduce((s,g)=>s+g.length/rows.length*impurity(g),0);return {f,groups,weighted,gain:impurity(rows)-weighted};}
+function rng(seed){let a=seed>>>0;return ()=>{a+=0x6D2B79F5;let t=a;t=Math.imul(t^t>>>15,t|1);t^=t+Math.imul(t^t>>>7,t|61);return ((t^t>>>14)>>>0)/4294967296;};}
+function dataset(kind='rectangle',noise=.1,seed=42){const r=rng(seed),rows=[];for(let i=0;i<240;i++){const x=[r(),r()];let y=kind==='rectangle'?+(x[0]>.28&&x[0]<.75&&x[1]>.3&&x[1]<.8):kind==='diagonal'?+(x[1]>x[0]):+((x[0]-.5)**2+(x[1]-.5)**2<.095);if(r()<noise)y=1-y;rows.push({x,y,id:i});}const order=rows.slice();for(let i=order.length-1;i>0;i--){const j=Math.floor(r()*(i+1));[order[i],order[j]]=[order[j],order[i]];}return {train:order.slice(0,168),validation:order.slice(168)};}
+function fit(rows,{depth=3,minLeaf=5,criterion='gini'}={}){let id=0;function grow(data,level,bounds){const positive=data.reduce((s,r)=>s+r.y,0),node={id:id++,n:data.length,positive,pred:+(positive>data.length/2),impurity:impurity(data,criterion),depth:level,bounds,rows:data};if(level>=depth||data.length<2*minLeaf||node.impurity===0)return node;let best=null;for(let f=0;f<2;f++){const sorted=data.slice().sort((a,b)=>a.x[f]-b.x[f]);for(let i=minLeaf;i<=sorted.length-minLeaf;i++){if(sorted[i-1].x[f]===sorted[i].x[f])continue;const left=sorted.slice(0,i),right=sorted.slice(i),loss=(i*impurity(left,criterion)+right.length*impurity(right,criterion))/data.length;if(!best||loss<best.loss-1e-12)best={f,threshold:(sorted[i-1].x[f]+sorted[i].x[f])/2,left,right,loss};}}if(!best||node.impurity-best.loss<=1e-12)return node;node.f=best.f;node.threshold=best.threshold;node.gain=node.impurity-best.loss;const a=bounds.slice(),b=bounds.slice();a[best.f*2+1]=best.threshold;b[best.f*2]=best.threshold;node.left=grow(best.left,level+1,a);node.right=grow(best.right,level+1,b);return node;}return grow(rows,0,[0,1,0,1]);}
+function predict(tree,x){let n=tree;while(n.left)n=x[n.f]<=n.threshold?n.left:n.right;return n.pred;}
+function stats(tree){if(!tree.left)return {leaves:1,depth:tree.depth};const a=stats(tree.left),b=stats(tree.right);return {leaves:a.leaves+b.leaves,depth:Math.max(a.depth,b.depth)};}
+function accuracy(tree,rows){return rows.filter(r=>predict(tree,r.x)===r.y).length/rows.length;}
+const api={tennis,attributes,impurity,categorical,dataset,fit,predict,stats,accuracy};if(typeof module!=='undefined')module.exports=api;else root.TreeModel=api;
+})(typeof window!=='undefined'?window:globalThis);

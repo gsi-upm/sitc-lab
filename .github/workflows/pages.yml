@@ -5,6 +5,9 @@ on:
     branches: ["main"]
     paths:
       - "1-intro/**"
+      - "index.html"
+      - "index.css"
+      - "index.js"
       - ".github/workflows/pages.yml"
   workflow_dispatch:
 
@@ -31,6 +34,7 @@ jobs:
         run: |
           mkdir _site
           cp -R 1-intro _site/
+          cp index.html index.css index.js _site/
 
       - name: Configure Pages
         uses: actions/configure-pages@v5

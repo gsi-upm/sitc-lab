@@ -1,0 +1,12 @@
+const assert=require('node:assert/strict'),E=require('../../1-intro/ensemblelab/model.js');
+const d=E.dataset('wave',.2,42);assert.deepEqual(d,E.dataset('wave',.2,42));assert.equal(d.train.length,90);assert.equal(d.validation.length,60);assert.equal(new Set([...d.train,...d.validation].map(r=>r.id)).size,150);
+const exact=[{id:0,x:0,y:2},{id:1,x:1,y:5},{id:2,x:2,y:8}];assert.ok(E.rmse(E.linear(exact),exact)<1e-12);
+const b=E.bagging(d.train,{count:12,bootstrap:false});assert.equal(b.oob().coverage,0);for(let x=0;x<=1;x+=.1)assert.ok(Math.abs(b.predict(x)-b.models[0].predict(x))<1e-12);
+const bag=E.bagging(d.train,{count:30,seed:42});assert.ok(bag.bags.some(a=>new Set(a).size<90));assert.ok(bag.oob().coverage>.9);let errors=[];for(const row of d.train){const models=bag.models.filter((_,i)=>!bag.bags[i].includes(row.id));if(models.length)errors.push((row.y-E.mean(models.map(m=>m.predict(row.x))))**2);}assert.ok(Math.abs(bag.oob().rmse-Math.sqrt(E.mean(errors)))<1e-12);
+const gb=E.boosting(d.train,{count:30,rate:.2});let previous=Infinity;for(let i=0;i<=30;i++){const error=E.rmse({predict:x=>gb.predict(x,i)},d.train);assert.ok(error<=previous+1e-12);previous=error;}for(let i=0;i<30;i++)gb.residuals[i].forEach((r,j)=>assert.ok(Math.abs(r.y-(d.train[j].y-gb.predict(r.x,i)))<1e-12));
+const s=E.stacking(d.train);assert.equal(s.oof.length,90);s.folds.forEach((fold,i)=>{assert.equal(fold.trainIds.length,60);assert.equal(fold.heldIds.length,30);assert.ok(fold.trainIds.every(id=>!fold.heldIds.includes(id)));d.train.forEach((r,j)=>{if(j%3===i)fold.models.forEach((m,k)=>assert.ok(Math.abs(m.predict(r.x)-s.oof[j][k])<1e-12));});});
+// Changing one held-out target must not affect that row's OOF predictions.
+const changed=d.train.map((r,i)=>i===0?{...r,y:999}:r);const s2=E.stacking(changed);assert.deepEqual(s.oof[0],s2.oof[0]);
+const independent=E.ridge(s.oof,d.train.map(r=>r.y),.1);assert.deepEqual(independent.weights,s.meta.weights);for(const x of [0,.2,.8,1])assert.ok(Math.abs(s.predict(x)-s.meta.predict(s.models.map(m=>m.predict(x))))<1e-12);
+for(const kind of ['wave','steps','linear'])for(const noise of [0,.6]){const a=E.dataset(kind,noise,1);for(const model of [E.bagging(a.train),E.boosting(a.train),E.stacking(a.train)])assert.ok(Number.isFinite(E.rmse(model,a.validation)));}
+console.log('Ensemble algorithms passed: bootstrap/OOB, decreasing training loss, residuals, OOF exclusion and final prediction.');
