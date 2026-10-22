@@ -7,3 +7,25 @@ header{flex-wrap:wrap;height:auto!important;min-height:72px}
 html[lang="en"] .home-es{display:none}
 html[lang="en"] .home-en{display:inline}
 @media(max-width:600px){.labs-home{order:10;margin:4px 0}}
+
+/* Consistent language control: last on desktop, first row right on mobile. */
+header #language{order:99;margin-left:auto!important;width:auto!important;max-width:160px;flex-shrink:0;font:400 14px/1.5 system-ui,sans-serif!important;padding:8px!important;border:1px solid #b8c5c9!important;border-radius:8px;background:#fff;color:#18365d}
+@media(max-width:700px){
+ header{display:flex!important;gap:10px!important}
+ header>.brand{order:0;margin-right:0}
+ header #language{order:1}
+ header>small,header>.upm-logo,header>nav,header>.labs-home{order:2}
+ header>small{flex-basis:100%}
+ header>.labs-home{margin:0}
+ header>nav{margin-left:0}
+}
+header{padding-left:24px!important;padding-right:24px!important}
+@media(max-width:700px){
+ header{display:grid!important;grid-template-columns:minmax(0,1fr) auto;padding-left:14px!important;padding-right:14px!important}
+ header>.brand{grid-row:1;grid-column:1}
+ header #language{grid-row:1;grid-column:2;justify-self:end}
+ header>small{grid-column:1/-1}
+ header>.upm-logo{grid-row:2;grid-column:1;justify-self:start}
+ header>nav{grid-row:2;grid-column:2;justify-self:end}
+ header>.labs-home{grid-column:1/-1;justify-self:start}
+}
