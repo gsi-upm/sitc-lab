@@ -1,0 +1,7 @@
+const assert=require('node:assert/strict'),R=require('../../1-intro/reinforcementlab/model.js'),c={alpha:.3,gamma:.95,epsilon:.2};
+assert.deepEqual(R.transition(0,0),{next:0,reward:-1,terminal:false,blocked:true});assert.equal(R.transition(16,1).reward,-9);assert.equal(R.transition(17,0).reward,-1);assert.equal(R.transition(19,1).terminal,true);
+let m=R.init();m.s=19;m.q[19]=[0,8,0,0];m.q[20]=[999,999,999,999];let x=R.step(m,{...c,epsilon:0});assert.equal(x.target,10);assert.equal(x.updated,8.6);assert.ok(m.pending);assert.equal(m.episodes.length,1);
+m=R.init();m.q[14]=[0,4,0,0];m.q[15]=[2,2,2,2];x=R.step(m,{...c,epsilon:0});assert.equal(x.target,-1+.95*2);assert.equal(x.updated,4+.3*(x.target-4));
+m=R.init();m.steps=79;x=R.step(m,c);assert.ok(x.capped);assert.ok(m.pending);assert.equal(m.episodes[0].steps,80);
+m=R.init();R.train(m,c,100);const before=JSON.stringify(m.q),result=R.evaluate(m.q);assert.equal(result.success,true);assert.equal(result.steps,10);assert.equal(result.total,1);assert.equal(JSON.stringify(m.q),before);assert.ok(!result.path.includes(R.HAZARD));let again=R.init();R.train(again,c,100);assert.deepEqual(again.q,m.q);
+let state=R.START,total=0;for(let i=0;i<6;i++){const tr=R.transition(state,1);state=tr.next;total+=tr.reward;}assert.equal(state,R.GOAL);assert.equal(total,-3);console.log('RL terminal targets, Bellman updates, cutoff, deterministic learning and frozen evaluation passed');

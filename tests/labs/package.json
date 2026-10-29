@@ -5,7 +5,9 @@
     "test": "node interaction.cjs && node layout.cjs",
     "test:tree": "node tree-model.cjs && node tree-ui.cjs",
     "test:ensemble": "node ensemble-model.cjs && node ensemble-ui.cjs && node ensemble-ada.cjs && node ensemble-classification.cjs",
-    "test:genetic": "node genetic-model.cjs && node genetic-ui.cjs"
+    "test:genetic": "node genetic-model.cjs && node genetic-ui.cjs",
+    "test:reinforcement": "node reinforcement-model.cjs && node reinforcement-ui.cjs",
+    "test:xai": "node xai-model.cjs && node xai-ui.cjs"
   },
   "devDependencies": {
     "playwright": "1.62.1"

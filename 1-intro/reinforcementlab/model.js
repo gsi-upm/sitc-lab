@@ -1,0 +1,11 @@
+(function(root){'use strict';
+const W=7,H=5,START=14,GOAL=20,HAZARD=17,WALLS=[10,24],ACTIONS=[{dx:0,dy:-1,arrow:'↑'},{dx:1,dy:0,arrow:'→'},{dx:0,dy:1,arrow:'↓'},{dx:-1,dy:0,arrow:'←'}],LIMIT=80;
+function rng(seed){let a=seed>>>0;return()=>{a+=0x6D2B79F5;let t=Math.imul(a^a>>>15,1|a);t^=t+Math.imul(t^t>>>7,61|t);return((t^t>>>14)>>>0)/4294967296;};}
+function transition(s,a){if(s===GOAL)return {next:s,reward:0,terminal:true,blocked:false};const x=s%W+ACTIONS[a].dx,y=Math.floor(s/W)+ACTIONS[a].dy;let next=y*W+x,blocked=x<0||x>=W||y<0||y>=H||WALLS.includes(next);if(blocked)next=s;return{next,reward:next===GOAL?10:next===HAZARD&&next!==s?-9:-1,terminal:next===GOAL,blocked};}
+function greedy(q,s,r){let best=Math.max(...q[s]),ids=q[s].map((v,i)=>v===best?i:-1).filter(i=>i>=0);return ids[Math.floor(r()*ids.length)];}
+function init(seed=7){return {q:Array.from({length:W*H},()=>[0,0,0,0]),r:rng(seed),s:START,steps:0,total:0,episodes:[],last:null,pending:false};}
+function step(m,c){if(m.pending){m.s=START;m.steps=0;m.total=0;m.pending=false;}const s=m.s,explore=m.r()<c.epsilon,a=explore?Math.floor(m.r()*4):greedy(m.q,s,m.r),tr=transition(s,a),old=m.q[s][a],future=tr.terminal?0:Math.max(...m.q[tr.next]),target=tr.reward+c.gamma*future,updated=old+c.alpha*(target-old);m.q[s][a]=updated;m.s=tr.next;m.steps++;m.total+=tr.reward;const capped=!tr.terminal&&m.steps>=LIMIT;m.last={s,a,...tr,old,future,target,updated,explore,capped,alpha:c.alpha,gamma:c.gamma};if(tr.terminal||capped){m.episodes.push({steps:m.steps,total:m.total,success:tr.terminal});m.pending=true;}return m.last;}
+function train(m,c,n){let end=m.episodes.length+n;while(m.episodes.length<end)step(m,c);}
+function evaluate(q,random=false){let r=rng(23),s=START,path=[s],total=0;for(let i=0;i<LIMIT;i++){let a=random?Math.floor(r()*4):greedy(q,s,r),tr=transition(s,a);s=tr.next;path.push(s);total+=tr.reward;if(tr.terminal)return{path,total,steps:i+1,success:true};}return {path,total,steps:LIMIT,success:false};}
+const api={W,H,START,GOAL,HAZARD,WALLS,ACTIONS,LIMIT,rng,transition,greedy,init,step,train,evaluate};if(typeof module!=='undefined'&&module.exports)module.exports=api;root.RL=api;
+})(typeof globalThis!=='undefined'?globalThis:this);
