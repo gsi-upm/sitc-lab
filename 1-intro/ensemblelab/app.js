@@ -1,6 +1,6 @@
 'use strict';
 const E=EnsembleModel,$=s=>document.querySelector(s);let lang='es',tab='bagging',step=0,fold=0,member=0,bagPanel='ensemble',saved=[];
-const cfg={kind:'wave',noise:.2,seed:42,count:12,depth:4,minLeaf:3,bootstrap:true,rounds:20,boostDepth:2,rate:.1,k:7,alpha:.1};let data,bag,boost,stack,single;
+const cfg={kind:'wave',noise:.2,seed:42,count:12,depth:4,minLeaf:3,bootstrap:true,rounds:20,boostDepth:2,rate:.5,k:7,alpha:.1};let data,bag,boost,stack,single;
 const tr=(a,b)=>lang==='es'?a:b,f=v=>Number(v).toFixed(3),names=()=>[tr('A · Regresión lineal','A · Linear regression'),'B · kNN',tr('C · Árbol','C · Tree')];
 function compute(){data=E.dataset(cfg.kind,cfg.noise,cfg.seed);single=E.tree(data.train,cfg.depth,cfg.minLeaf);bag=E.bagging(data.train,cfg);boost=E.boosting(data.train,{count:cfg.rounds,depth:cfg.boostDepth,minLeaf:cfg.minLeaf,rate:cfg.rate});stack=E.stacking(data.train,cfg);member=Math.min(member,cfg.count-1);}compute();
 const key=()=>JSON.stringify({tab,cfg}),dataKey=c=>[c.kind,c.noise,c.seed].join('|');const current=()=>tab==='bagging'?bag:tab==='boosting'?boost:stack;
