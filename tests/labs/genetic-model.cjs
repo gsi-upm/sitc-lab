@@ -6,6 +6,7 @@ for(let seed=1;seed<=30;seed++){
 }
 assert.deepEqual(G.ox([0,1,2,3,4],[4,3,2,1,0],1,2),[3,1,2,0,4]);
 const s=G.init({seed:42,length:24,pm:1,pc:0,elite:0,generations:1});G.advance(s);G.advance(s);G.advance(s);for(const tr of s.trace){for(let i=0;i<2;i++)assert.deepEqual(tr.after[i],tr.cross[i].map(v=>1-v));}G.advance(s);assert.ok(s.done);assert.equal(s.generation,1);
+assert.ok(s.previousPop);assert.equal(s.previousPop.length,s.c.population);assert.notStrictEqual(s.previousPop,s.pop);assert.notStrictEqual(s.previousPop[0].g,s.pop[0].g);
 const zeros=[{fit:0},{fit:0}];for(let i=0;i<20;i++)assert.ok([0,1].includes(G.select(zeros,'roulette',2,G.rng(i))));
 const optimum=G.init({seed:5});optimum.pop[0]={g:Array(12).fill(1),value:12,fit:12};G.generation(optimum);assert.equal(optimum.best.value,12);assert.ok(optimum.done);const n=optimum.evaluations;G.advance(optimum);assert.equal(optimum.evaluations,n);
 const r1=G.init({problem:'tsp',seed:4,runSeed:5}),r2=G.init({problem:'tsp',seed:4,runSeed:6});assert.deepEqual(r1.points,r2.points);assert.notDeepEqual(r1.pop,r2.pop);
