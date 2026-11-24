@@ -1,6 +1,6 @@
 const copy={
   es:{
-    llmTitle:'Construir contexto con atención',llmText:'Sigue los tokens, explora Q, K y V y recorre visualmente un bloque Transformer.',
+    llmTitle:'Construir contexto con atención',llmText:'Sigue las unidades (tokens), explora Q, K y V y recorre visualmente un bloque de transformador.',
     nlpTitle:'Del texto al significado',nlpText:'Explora palabras, construye TF-IDF y compara búsqueda semántica y análisis de sentimiento.',
     xaiTitle:'Entender una predicción',xaiText:'Explica el precio de una vivienda con ejemplos, regiones, LIME, SHAP y contrafactuales.',
     rlTitle:'Aprender de cada acción',rlText:'Guía un robot, observa cómo aprende con Q-learning y prueba su política en un tablero con recompensas.',
@@ -11,7 +11,7 @@ const copy={
     lede:'Una colección breve de laboratorios para entender cómo aprenden los modelos y cómo evaluamos sus predicciones.',
     cta:'Explorar laboratorios ↓',heroNote:'Datos → modelo → evidencia',sectionEyebrow:'Elige un laboratorio',
     sectionTitle:'Once formas de aprender experimentando',
-    sectionText:'Empieza por PromptLab y avanza hacia la clasificación, la geometría, la regresión, los árboles, los ensembles, los algoritmos genéticos, el aprendizaje por refuerzo, la explicabilidad, el lenguaje natural y los Transformers. Cada laboratorio se puede abrir directamente desde este panel.',
+    sectionText:'Empieza por PromptLab y avanza hacia la clasificación, la geometría, la regresión, los árboles, los conjuntos de modelos, los algoritmos genéticos, el aprendizaje por refuerzo, la explicabilidad, el lenguaje natural y los transformadores (Transformers). Cada laboratorio se puede abrir directamente desde este panel.',
     promptKicker:'01 · PromptLab',promptTitle:'Diseñar mejores instrucciones',promptText:'Descubre cómo una instrucción cambia la respuesta de un modelo de lenguaje.',
     classifierKicker:'02 · ClassifierLab',classifierTitle:'Cuando la exactitud no basta',classifierText:'Explora matrices de confusión, precisión, recall, F1 y curvas ROC con datos desbalanceados.',
     geoKicker:'04 · GeometricLab',geoTitle:'Modelos y fronteras',geoText:'Compara algoritmos, hiperparámetros y el efecto del ruido en la frontera de decisión.',
