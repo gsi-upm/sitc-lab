@@ -8,7 +8,8 @@
     "test:genetic": "node genetic-model.cjs && node genetic-ui.cjs",
     "test:reinforcement": "node reinforcement-model.cjs && node reinforcement-ui.cjs",
     "test:xai": "node xai-model.cjs && node xai-ui.cjs",
-    "test:nlp": "node nlp-model.cjs && node nlp-ui.cjs"
+    "test:nlp": "node nlp-model.cjs && node nlp-ui.cjs",
+    "test:llm": "node llm-model.cjs && node llm-ui.cjs"
   },
   "devDependencies": {
     "playwright": "1.62.1"
