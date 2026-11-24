@@ -18,12 +18,16 @@ const url = process.env.LLM_URL || 'http://127.0.0.1:4180/1-intro/llmlab/';
 
       for (const lang of ['es', 'en']) {
         await page.selectOption('#language', lang);
-        assert.equal(await page.locator('.tabs button').count(), 6);
+        assert.equal(await page.locator('.tabs button').count(), 7);
 
         await page.click('[data-step="0"]');
         assert.equal(await page.locator('.embedding-row').count(), 4);
+        assert.ok((await page.locator('.embedding-header').textContent()).includes(lang === 'es' ? 'embedding' : 'Lexical'));
         await page.click('[data-vector-token="3"]');
         assert.ok((await page.locator('.selected-vector-detail').textContent()).includes('bank'));
+
+        await page.click('[data-step="1"]');
+        assert.ok(await page.locator('.bank-word').count() >= 4);
 
         await page.click('[data-step="2"]');
         const stableSlider = await page.evaluate(() => {
@@ -51,6 +55,7 @@ const url = process.env.LLM_URL || 'http://127.0.0.1:4180/1-intro/llmlab/';
 
         await page.click('[data-step="4"]');
         assert.equal(await page.locator('.head-card').count(), 3);
+        assert.equal(await page.locator('.heads-caveat').count(), 1);
         await page.click('[data-head="0"]');
         const firstHead = await page.locator('.selected-head h3').textContent();
         await page.click('[data-head="2"]');
@@ -73,6 +78,9 @@ const url = process.env.LLM_URL || 'http://127.0.0.1:4180/1-intro/llmlab/';
         assert.equal(await page.locator('.score-row').count(), 4);
         assert.equal(await page.locator('.prob-row').count(), 4);
         assert.ok((await page.locator('.demo-prediction').textContent()).includes('bank'));
+        await page.click('#next');
+        assert.equal(await page.locator('.final-challenge').count(), 1);
+        assert.equal(await page.locator('#next').isEnabled(), false);
         assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth), false);
       }
 

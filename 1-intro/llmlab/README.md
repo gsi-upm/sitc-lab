@@ -9,7 +9,8 @@ El recorrido utiliza el ejemplo `bank–river–money` para mostrar:
 3. la atención como desplazamiento o mezcla de representaciones;
 4. el papel de la Consulta (Query), la Clave (Key) y el Valor (Value);
 5. la atención multicabeza;
-6. el flujo esencial de un bloque de transformador, incluida la expansión del MLP y el cálculo de probabilidades.
+6. el flujo esencial de un bloque de transformador, incluida la expansión del MLP y el cálculo de probabilidades;
+7. una conclusión guiada y un reto final para comprobar la comprensión.
 
 Los vectores y probabilidades son valores didácticos pequeños. La interfaz identifica explícitamente qué partes son simplificaciones visuales.
 
