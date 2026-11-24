@@ -11,3 +11,4 @@
 .lime-curve{margin:16px 0}.lime-curve svg{display:block;max-width:680px;margin:auto}.lime-curve figcaption{font-size:14px;color:#18365d}
 
 .data-panel .table-scroll{max-height:340px;overflow:auto}.data-panel table thead th{position:sticky;top:0;background:#edf4fc;z-index:1}.data-tabs [hidden]{display:none!important}.data-tabs{margin:14px 0}
+.region-price{display:flex;justify-content:space-between;align-items:center;gap:16px;max-width:540px;margin:8px auto 4px;padding:10px 14px;background:#e2eefb;border-radius:8px;color:#18365d}.region-price strong{font-size:22px;white-space:nowrap}
