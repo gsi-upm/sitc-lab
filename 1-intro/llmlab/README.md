@@ -4,10 +4,17 @@ Laboratorio visual y bilingüe para comprender la intuición de los transformado
 
 El recorrido utiliza el ejemplo `bank–river–money` para mostrar:
 
-1. la necesidad de vectores de representación (embeddings) contextualizados;
-2. la atención como desplazamiento o mezcla de representaciones;
-3. el papel de la Consulta (Query), la Clave (Key) y el Valor (Value);
-4. la atención multicabeza;
-5. el flujo esencial de un bloque de transformador hasta la predicción de la siguiente unidad (token).
+1. cómo se suman el encaje léxico (embedding) y la posición para formar el vector de entrada;
+2. la necesidad de representaciones contextualizadas;
+3. la atención como desplazamiento o mezcla de representaciones;
+4. el papel de la Consulta (Query), la Clave (Key) y el Valor (Value);
+5. la atención multicabeza;
+6. el flujo esencial de un bloque de transformador, incluida la expansión del MLP y el cálculo de probabilidades.
 
 Los vectores y probabilidades son valores didácticos pequeños. La interfaz identifica explícitamente qué partes son simplificaciones visuales.
+
+## Referencia visual y licencia
+
+La visualización de la capa de entrada —segmentación, encaje léxico, posición y suma final— adapta [Transformer Explainer](https://poloclub.github.io/transformer-explainer/), de Cho et al. (Georgia Institute of Technology), a la versión estática y simplificada de LLMLab. No se incorpora el modelo GPT-2 ni el entorno Svelte/Node.js del proyecto original.
+
+Transformer Explainer se distribuye con licencia MIT. Referencia: A. Cho et al., “Transformer Explainer: Learning LLM Transformers with Interactive Visual Explanation and Experimentation”, *Proceedings of the 2026 CHI Conference on Human Factors in Computing Systems*, 2026.
