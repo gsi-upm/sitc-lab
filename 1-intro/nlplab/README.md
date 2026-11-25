@@ -14,7 +14,7 @@ Laboratorio estático ES/EN, con ejemplos de texto en inglés. Cuatro recorridos
 
 `data/precomputed.json` contiene resultados generados ejecutando ambos modelos con Transformers.js **3.8.1**, pesos ONNX **q8**, backend WASM. Los ejemplos funcionan con sólo los archivos estáticos del laboratorio. No se cargan recursos externos hasta solicitar una consulta/reseña no precalculada.
 
-Para texto nuevo, `inference-worker.js` descarga Transformers.js desde jsDelivr y los pesos de Hugging Face. Ejecuta la inferencia localmente en un Web Worker, con un hilo WASM; no envía textos a servicios de inferencia. Navegador moderno e internet para la primera descarga. La caché depende del navegador. Incluye estado de descarga, recuperación ante error y timeout de 3 minutos. No hay sustitución silenciosa por reglas si falla el modelo.
+Para texto nuevo, `inference-worker.js` descarga Transformers.js desde jsDelivr y los pesos de Hugging Face. El mismo botón de análisis carga el modelo si hace falta, ejecuta la inferencia localmente en un Web Worker y muestra el resultado; no existe un paso separado de mera descarga. Usa un hilo WASM y no envía textos a servicios de inferencia. Requiere un navegador moderno e internet para la primera descarga. La caché depende del navegador. Incluye estado de descarga, recuperación ante error y timeout de 3 minutos. No hay sustitución silenciosa por reglas si falla el modelo.
 
 ## Regenerar datos
 
