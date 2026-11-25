@@ -26,10 +26,11 @@ assert.equal(model.beatlesNodes.filter(node => node.kind === 'instrument').lengt
 assert.equal(model.beatlesEdges.length, 17);
 assert.equal(model.beatlesEdges.filter(edge => edge.kind === 'performedBy').length, 9);
 assert.equal(model.beatlesEdges.filter(edge => edge.kind === 'plays').length, 8);
-assert.equal(model.beatlesQuestions.length, 4);
-assert.deepEqual([...model.beatlesQuestions.map(question => question.correct)], [0, 1, 2, 1]);
+assert.equal(model.beatlesQuestions.length, 5);
+assert.deepEqual([...model.beatlesQuestions.map(question => question.correct)], [0, 1, 2, 1, 2]);
 assert.ok(model.beatlesQuestions.some(question => question.options.some(option => option.includes('GROUP BY'))));
 assert.ok(model.beatlesQuestions.some(question => question.options.some(option => option.includes('HAVING'))));
+assert.ok(model.beatlesQuestions.some(question => question.id === 'song-instrument-count' && question.activeEdges.length === model.beatlesEdges.length));
 assert.ok(!model.beatlesQuestions.some(question => question.options.some(option => /REGEX/i.test(option))));
 assert.ok(model.copy.es.rdfDefinition.includes('tripla'));
 assert.ok(!model.copy.es.rdfDefinition.includes('triple'));

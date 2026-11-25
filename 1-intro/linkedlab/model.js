@@ -47,6 +47,13 @@ window.LinkedLabModel = (() => {
       legendResource: 'Recurso o entidad', legendProperty: 'Propiedad o relación', legendLiteral: 'Valor literal', legendExternal: 'Dato externo',
       emptyGraph: 'El grafo aparecerá aquí', emptyGraphHint: 'Primero transforma el texto.',
       graphDefinition: 'Un grafo de conocimiento representa hechos mediante nodos y relaciones con significado. Los nodos pueden ser entidades identificables o valores literales.',
+      kgFormulaTitle: '¿Qué convierte el dibujo en un grafo de conocimiento?',
+      kgParts: [
+        ['Identidad', 'Los recursos pueden identificarse de forma inequívoca; después veremos cómo hacerlo con URI.'],
+        ['Semántica', 'Los tipos y las relaciones tienen un significado explícito, no son líneas sin nombre.'],
+        ['Conexión', 'Los hechos comparten nodos y pueden combinarse para obtener conocimiento nuevo mediante consultas.']
+      ],
+      kgFormulaResult: 'Entidades identificables + relaciones con significado + hechos conectados = grafo de conocimiento',
       graphTask: 'Inspecciona los nodos', graphTaskHint: 'Pulsa un nodo para saber qué representa y qué hechos lo conectan.',
       inspectorEmpty: 'Selecciona un nodo del grafo.',
       resource: 'Recurso', literal: 'Literal', external: 'Recurso externo', classLabel: 'Clase',
@@ -86,17 +93,20 @@ window.LinkedLabModel = (() => {
       principles: ['Usar URI para nombrar recursos', 'Usar URI HTTP que puedan consultarse', 'Ofrecer información útil con RDF', 'Añadir enlaces a otras URI'],
       linkedNote: 'Las relaciones en color proceden del texto. Las grises representan conocimiento que aparece al seguir enlaces externos.',
       challengeTitle: 'Laboratorio final: consulta el grafo de los Beatles',
-      challengeText: 'Aplica SPARQL a un grafo nuevo, inspirado en el notebook de los Beatles. Resuelve cuatro preguntas de dificultad creciente sin instalar Fuseki.',
+      challengeText: 'Aplica SPARQL a un grafo de conocimiento inspirado en el notebook de los Beatles. Resuelve cinco preguntas de dificultad creciente sin instalar Fuseki.',
       challengeIntro: 'Las canciones se enlazan con músicos; los músicos, con instrumentos. Los dos colores distinguen las relaciones “interpretada por” y “toca”.',
+      advancedGraphTitle: 'Ampliación: instrumentos como nodos',
+      advancedGraphText: 'Modelamos cada instrumento como un recurso con tipo e identificador propios. Así puede conectarse con varios músicos, aparecer en resultados y participar en recuentos; no queda reducido a una cadena de texto.',
+      sparqlRouteTitle: 'Ruta SPARQL: de patrones sencillos a consultas agregadas',
       challengeRdfType: 'En SPARQL, “a” es una abreviatura de rdf:type.',
       beatlesKinds: { song: 'Canción', musician: 'Músico', instrument: 'Instrumento' },
       beatlesRelations: { performedBy: 'Interpretada por', plays: 'Toca' },
-      challengeProgress: n => `${n} de 4 resueltas`,
+      challengeProgress: n => `${n} de 5 resueltas`,
       challengeChoose: 'Elige una consulta', challengeCheck: 'Comprobar consulta',
       challengeCorrect: 'Correcto: la consulta responde a la pregunta sobre este grafo.',
       challengeWrong: 'Esa consulta no sigue el patrón necesario. Revisa la dirección de las relaciones y las variables.',
       challengeResult: 'Resultado sobre este grafo',
-      challengeComplete: 'Has resuelto DISTINCT, un recorrido de dos saltos, COUNT con GROUP BY y una condición HAVING.',
+      challengeComplete: 'Has resuelto DISTINCT, recorridos de dos saltos, COUNT con GROUP BY, HAVING y una agregación que combina canciones, músicos e instrumentos.',
       challengeSource: 'Ejercicio adaptado del notebook SPARQL de los Beatles',
       conclusionsTitle: 'Qué debes recordar',
       conclusions: [
@@ -123,6 +133,13 @@ window.LinkedLabModel = (() => {
       legendResource: 'Resource or entity', legendProperty: 'Property or relationship', legendLiteral: 'Literal value', legendExternal: 'External fact',
       emptyGraph: 'The graph will appear here', emptyGraphHint: 'Transform the text first.',
       graphDefinition: 'A knowledge graph represents facts as meaningful nodes and relationships. Nodes can be identifiable entities or literal values.',
+      kgFormulaTitle: 'What turns the diagram into a knowledge graph?',
+      kgParts: [
+        ['Identity', 'Resources can be identified unambiguously; later we use URIs to do this.'],
+        ['Semantics', 'Types and relationships have explicit meaning; they are not unnamed lines.'],
+        ['Connection', 'Facts share nodes and can be combined by queries to obtain new knowledge.']
+      ],
+      kgFormulaResult: 'Identifiable entities + meaningful relationships + connected facts = knowledge graph',
       graphTask: 'Inspect the nodes', graphTaskHint: 'Select a node to learn what it represents and which facts connect it.',
       inspectorEmpty: 'Select a graph node.',
       resource: 'Resource', literal: 'Literal', external: 'External resource', classLabel: 'Class',
@@ -162,17 +179,20 @@ window.LinkedLabModel = (() => {
       principles: ['Use URIs to name resources', 'Use HTTP URIs that can be looked up', 'Provide useful information with RDF', 'Add links to other URIs'],
       linkedNote: 'Coloured relationships come from the text. Grey ones represent knowledge found by following external links.',
       challengeTitle: 'Final laboratory: query the Beatles graph',
-      challengeText: 'Apply SPARQL to a new graph inspired by the Beatles notebook. Solve four increasingly difficult questions without installing Fuseki.',
+      challengeText: 'Apply SPARQL to a knowledge graph inspired by the Beatles notebook. Solve five increasingly difficult questions without installing Fuseki.',
       challengeIntro: 'Songs link to musicians, and musicians link to instruments. The two colours distinguish “performed by” and “plays”.',
+      advancedGraphTitle: 'Extension: instruments as nodes',
+      advancedGraphText: 'Each instrument is modelled as a resource with its own type and identifier. It can therefore connect to several musicians, appear in results and take part in counts instead of being reduced to a text string.',
+      sparqlRouteTitle: 'SPARQL route: from simple patterns to aggregate queries',
       challengeRdfType: 'In SPARQL, “a” is shorthand for rdf:type.',
       beatlesKinds: { song: 'Song', musician: 'Musician', instrument: 'Instrument' },
       beatlesRelations: { performedBy: 'Performed by', plays: 'Plays' },
-      challengeProgress: n => `${n} of 4 solved`,
+      challengeProgress: n => `${n} of 5 solved`,
       challengeChoose: 'Choose a query', challengeCheck: 'Check query',
       challengeCorrect: 'Correct: the query answers the question over this graph.',
       challengeWrong: 'That query does not follow the required pattern. Check relationship direction and variables.',
       challengeResult: 'Result over this graph',
-      challengeComplete: 'You solved DISTINCT, a two-hop traversal, COUNT with GROUP BY and a HAVING condition.',
+      challengeComplete: 'You solved DISTINCT, two-hop traversals, COUNT with GROUP BY, HAVING and an aggregation combining songs, musicians and instruments.',
       challengeSource: 'Exercise adapted from the Beatles SPARQL notebook',
       conclusionsTitle: 'What to remember',
       conclusions: [
@@ -254,6 +274,7 @@ window.LinkedLabModel = (() => {
       id: 'types',
       question: { es: '¿Qué tipos de recursos hay en el grafo?', en: 'Which resource types are in the graph?' },
       concept: 'DISTINCT',
+      explanation: { es: 'El patrón “?entity a ?type” busca el tipo de cada recurso. DISTINCT elimina los tipos repetidos.', en: 'The “?entity a ?type” pattern finds each resource type. DISTINCT removes repeated types.' },
       options: [
         'PREFIX s: <http://learningsparql.com/ns/schema/>\n\nSELECT DISTINCT ?type\nWHERE {\n  ?entity a ?type .\n}',
         'PREFIX s: <http://learningsparql.com/ns/schema/>\n\nSELECT DISTINCT ?type\nWHERE {\n  ?type a ?entity .\n}',
@@ -269,6 +290,7 @@ window.LinkedLabModel = (() => {
       id: 'hey-jude-instruments',
       question: { es: '¿Qué músicos participaron en Hey Jude y qué instrumentos toca cada uno?', en: 'Which musicians performed on Hey Jude and which instruments does each one play?' },
       concept: { es: 'Dos saltos', en: 'Two hops' },
+      explanation: { es: 'La variable compartida ?musician une dos patrones: canción → músico y músico → instrumento.', en: 'The shared ?musician variable joins two patterns: song → musician and musician → instrument.' },
       options: [
         'PREFIX ex: <https://example.org/beatles/>\nPREFIX song: <http://learningsparql.com/ns/song/>\n\nSELECT DISTINCT ?musician ?instrument\nWHERE {\n  ?musician ex:performedBy song:HeyJude .\n  ?instrument ex:plays ?musician .\n}',
         'PREFIX ex: <https://example.org/beatles/>\nPREFIX song: <http://learningsparql.com/ns/song/>\n\nSELECT DISTINCT ?musician ?instrument\nWHERE {\n  song:HeyJude ex:performedBy ?musician .\n  ?musician ex:plays ?instrument .\n}\nORDER BY ?musician ?instrument',
@@ -293,6 +315,7 @@ window.LinkedLabModel = (() => {
       id: 'instrument-count',
       question: { es: '¿Qué instrumento está asociado a más músicos?', en: 'Which instrument is associated with the most musicians?' },
       concept: 'GROUP BY',
+      explanation: { es: 'GROUP BY reúne las soluciones por instrumento; COUNT cuenta cuántos músicos distintos hay en cada grupo.', en: 'GROUP BY collects solutions by instrument; COUNT finds how many distinct musicians occur in each group.' },
       options: [
         'PREFIX ex: <https://example.org/beatles/>\n\nSELECT ?instrument ?musician\nWHERE {\n  ?musician ex:plays ?instrument .\n}\nORDER BY ?instrument',
         'PREFIX ex: <https://example.org/beatles/>\n\nSELECT ?instrument (COUNT(?musician) AS ?musicians)\nWHERE {\n  ?musician ex:plays ?instrument .\n}\nORDER BY DESC(?musicians)\nLIMIT 1',
@@ -308,6 +331,7 @@ window.LinkedLabModel = (() => {
       id: 'all-songs',
       question: { es: '¿Qué músico aparece en las tres canciones?', en: 'Which musician appears on all three songs?' },
       concept: 'HAVING',
+      explanation: { es: 'HAVING filtra los grupos después del recuento: sólo conserva músicos asociados con al menos tres canciones.', en: 'HAVING filters groups after counting, retaining only musicians associated with at least three songs.' },
       options: [
         'PREFIX ex: <https://example.org/beatles/>\n\nSELECT ?musician (COUNT(DISTINCT ?song) AS ?songs)\nWHERE {\n  ?song ex:performedBy ?musician .\n}\nHAVING (COUNT(DISTINCT ?song) >= 3)',
         'PREFIX ex: <https://example.org/beatles/>\n\nSELECT ?musician (COUNT(DISTINCT ?song) AS ?songs)\nWHERE {\n  ?song ex:performedBy ?musician .\n}\nGROUP BY ?musician\nHAVING (COUNT(DISTINCT ?song) >= 3)\nORDER BY DESC(?songs)',
@@ -317,6 +341,26 @@ window.LinkedLabModel = (() => {
       columns: ['musician', 'songs'],
       rows: [['m:PaulMcCartney', '3']],
       activeEdges: ['hj-john', 'hj-paul', 'hj-george', 'hj-ringo', 'ct-john', 'ct-paul', 'ct-george', 'ct-ringo', 'yd-paul'],
+      activeNodes: []
+    },
+    {
+      id: 'song-instrument-count',
+      question: { es: '¿Cuántos instrumentos distintos están asociados a cada canción a través de sus músicos?', en: 'How many distinct instruments are associated with each song through its musicians?' },
+      concept: { es: 'Dos saltos + COUNT', en: 'Two hops + COUNT' },
+      explanation: { es: 'La consulta encadena canción → músico → instrumento y después agrupa por canción. Es una combinación de unión de patrones y agregación.', en: 'The query chains song → musician → instrument and then groups by song. It combines pattern joins with aggregation.' },
+      options: [
+        'PREFIX ex: <https://example.org/beatles/>\n\nSELECT ?song (COUNT(DISTINCT ?musician) AS ?instruments)\nWHERE {\n  ?song ex:performedBy ?musician .\n}\nGROUP BY ?song\nORDER BY DESC(?instruments)',
+        'PREFIX ex: <https://example.org/beatles/>\n\nSELECT ?song (COUNT(DISTINCT ?instrument) AS ?instruments)\nWHERE {\n  ?musician ex:performedBy ?song .\n  ?instrument ex:plays ?musician .\n}\nGROUP BY ?song\nORDER BY DESC(?instruments)',
+        'PREFIX ex: <https://example.org/beatles/>\n\nSELECT ?song (COUNT(DISTINCT ?instrument) AS ?instruments)\nWHERE {\n  ?song ex:performedBy ?musician .\n  ?musician ex:plays ?instrument .\n}\nGROUP BY ?song\nORDER BY DESC(?instruments) ?song'
+      ],
+      correct: 2,
+      columns: ['song', 'instruments'],
+      rows: [
+        ['song:ComeTogether', '5'],
+        ['song:HeyJude', '5'],
+        ['song:Yesterday', '4']
+      ],
+      activeEdges: beatlesEdges.map(edge => edge.id),
       activeNodes: []
     }
   ];

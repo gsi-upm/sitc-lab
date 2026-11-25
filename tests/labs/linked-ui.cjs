@@ -24,6 +24,7 @@ const url = process.env.LINKED_URL || 'http://127.0.0.1:4180/1-intro/linkedlab/'
       assert.ok((await page.locator('.inspector').textContent()).includes('Literal'));
 
       await page.click('[data-step="1"]');
+      assert.equal(await page.locator('.kg-parts article').count(), 3);
       await page.click('[data-classify="literal"]');
       assert.equal(await page.locator('.option.correct').count(), 1);
 
@@ -56,13 +57,14 @@ const url = process.env.LINKED_URL || 'http://127.0.0.1:4180/1-intro/linkedlab/'
       assert.equal(await page.locator('#next').isEnabled(), false);
       assert.equal(await page.locator('.beatles-node').count(), 12);
       assert.equal(await page.locator('.beatles-edge').count(), 17);
-      for (const [question, answer] of [0, 1, 2, 3].map((question, index) => [question, [0, 1, 2, 1][index]])) {
+      assert.equal(await page.locator('.advanced-graph-intro').count(), 1);
+      for (const [question, answer] of [0, 1, 2, 3, 4].map((question, index) => [question, [0, 1, 2, 1, 2][index]])) {
         await page.click(`[data-beatles-question="${question}"]`);
         await page.click(`[data-beatles-choice="${answer}"]`);
         await page.click('#check-beatles');
         assert.equal(await page.locator('.beatles-answer.revealed').count(), 1);
       }
-      assert.equal(await page.locator('.beatles-question-tabs .solved').count(), 4);
+      assert.equal(await page.locator('.beatles-question-tabs .solved').count(), 5);
       assert.equal(await page.locator('#next').isEnabled(), true);
       await page.click('#next');
       assert.equal(await page.locator('#next').isEnabled(), false);

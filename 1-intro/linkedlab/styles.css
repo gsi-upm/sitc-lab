@@ -105,6 +105,9 @@ button:disabled{cursor:not-allowed;opacity:.45}
 .node .node-type{font-size:10px;fill:var(--muted);font-weight:650;text-transform:uppercase}
 .node .node-uri{font-size:10px;fill:var(--blue);font-weight:650}
 .graph-caption{position:absolute;left:12px;bottom:10px;padding:5px 9px;border:1px solid var(--line);border-radius:999px;background:rgba(255,255,255,.9);color:var(--muted);font-size:.75rem}
+.kg-explainer{margin:0 0 14px;padding:15px;border:1px solid #b9d8d3;border-radius:13px;background:linear-gradient(135deg,#f3fbfa,#f4f8fc)}
+.kg-explainer>h4{margin:0 0 11px;color:var(--ink)}.kg-parts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px}
+.kg-parts article{display:grid;grid-template-columns:28px 1fr;gap:8px;align-items:start;padding:10px;border:1px solid var(--line);border-radius:10px;background:white}.kg-parts article>b{display:grid;place-items:center;width:28px;height:28px;border-radius:50%;background:var(--teal);color:white}.kg-parts h4{margin:1px 0 3px;font-size:.9rem}.kg-parts p{margin:0;color:var(--muted);font-size:.8rem;line-height:1.45}.kg-result{margin:11px 0 0;padding:9px 11px;border-radius:8px;background:var(--ink);color:white;text-align:center;font-weight:800}
 
 .inspector{min-height:145px;margin-top:14px;padding:15px;border:1px solid var(--line);border-radius:12px;background:white}
 .inspector h4{margin:0 0 4px;font-size:1.1rem}.inspector p{margin:5px 0;color:var(--muted)}
@@ -161,6 +164,8 @@ pre{margin:0;white-space:pre-wrap;overflow-wrap:anywhere;font:500 .85rem/1.7 "DM
 .principle span{font-size:.88rem;color:var(--muted)}
 
 .beatles-head p{max-width:660px}.beatles-head .stat{flex:0 0 auto}
+.advanced-graph-intro{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:18px;align-items:center;margin:0 0 13px;padding:14px 16px;border-left:5px solid var(--orange);border-radius:0 12px 12px 0;background:var(--orange-soft)}
+.advanced-graph-intro h4{margin:0 0 4px;color:#7e431c}.advanced-graph-intro p{margin:0;color:#6d5749;font-size:.88rem;line-height:1.5}.kind-summary{display:flex;gap:7px;flex-wrap:wrap;justify-content:flex-end}.kind-summary span{display:flex;align-items:center;gap:5px;padding:6px 9px;border:1px solid var(--line);border-radius:999px;background:white;color:var(--muted);font-size:.78rem;font-weight:750}.kind-summary b{color:var(--ink)}.kind-summary .instrument{border-color:#e6ad78;background:#fff9f2}.sparql-route-title{margin:17px 0 7px;color:var(--ink)}
 .beatles-graph-panel{padding:10px 14px 12px;background:linear-gradient(180deg,#fbfdff,#f4f8fb)}
 .beatles-graph{display:block;width:100%;height:auto;min-height:410px}
 .beatles-edge{fill:none;stroke:var(--edge-colour);stroke-width:2.2;opacity:.52;transition:.2s ease}
@@ -174,11 +179,12 @@ pre{margin:0;white-space:pre-wrap;overflow-wrap:anywhere;font:500 .85rem/1.7 "DM
 .beatles-legend{display:flex;justify-content:center;gap:18px;flex-wrap:wrap;margin-top:-2px;color:var(--muted);font-size:.8rem;font-weight:700}
 .beatles-legend span{display:flex;align-items:center;gap:6px}.beatles-legend i{display:inline-block;width:22px;height:4px;border-radius:999px}
 .beatles-legend .performedBy{background:#c62977}.beatles-legend .plays{background:#169c91}
-.beatles-question-tabs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin:14px 0}
+.beatles-question-tabs{display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:8px;margin:10px 0 14px}
 .beatles-question-tabs button{position:relative;display:grid;grid-template-columns:28px 1fr;align-items:center;gap:7px;min-height:52px;border:1px solid var(--line);border-radius:11px;background:white;color:var(--ink);padding:8px;text-align:left}
 .beatles-question-tabs button span{display:grid;place-items:center;width:28px;height:28px;border-radius:50%;background:#edf3f7;color:var(--muted);font-weight:800}.beatles-question-tabs button b{font-size:.78rem}
 .beatles-question-tabs button i{position:absolute;right:7px;top:5px;color:var(--teal);font-style:normal;font-weight:900}.beatles-question-tabs button.active{border-color:var(--teal);background:var(--teal-soft)}.beatles-question-tabs button.solved span{background:var(--teal);color:white}
 .beatles-question>h4{margin:0 0 14px;font-size:1.05rem}
+.beatles-explanation{margin:-7px 0 14px;padding:9px 11px;border-radius:9px;background:var(--blue-soft);color:#315b83;font-size:.85rem;line-height:1.45}
 .beatles-hint{margin:-5px 0 12px;color:var(--muted);font-size:.85rem}
 .beatles-query-grid{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(260px,.8fr);gap:16px}
 .beatles-choice-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:8px;color:var(--muted);font-size:.82rem;font-weight:800;text-transform:uppercase;letter-spacing:.05em}
@@ -199,7 +205,7 @@ footer{padding:28px 16px;text-align:center;color:var(--muted);font-size:.82rem}f
 
 @media(max-width:900px){
   .stage{grid-template-columns:1fr}.guide{position:static}.split-demo,.rdf-grid,.sparql-grid{grid-template-columns:1fr}
-  .graph-wrap,.knowledge-graph{min-height:360px}.identity-flow{grid-template-columns:1fr}.identity-card:not(:last-child)::after{display:none}.beatles-query-grid{grid-template-columns:1fr}
+  .graph-wrap,.knowledge-graph{min-height:360px}.identity-flow{grid-template-columns:1fr}.identity-card:not(:last-child)::after{display:none}.beatles-query-grid{grid-template-columns:1fr}.kg-parts{grid-template-columns:1fr}.advanced-graph-intro{grid-template-columns:1fr}.kind-summary{justify-content:flex-start}
 }
 @media(max-width:680px){
   main{width:min(100% - 20px,1180px);padding-top:28px}h1{font-size:2.3rem}.intro{padding-bottom:18px}

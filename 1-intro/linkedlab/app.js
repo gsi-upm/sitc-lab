@@ -192,10 +192,16 @@
   function renderGraphMeaning() {
     const c = copy();
     const feedback = state.classification === null ? '' : state.classification === 'literal' ? c.correctLiteral : c.tryAgain;
+    const knowledgeParts = c.kgParts.map(([title, description], index) => `<article><b>${index + 1}</b><div><h4>${escapeHtml(title)}</h4><p>${escapeHtml(description)}</p></div></article>`).join('');
     return `<div class="stage">
       ${guide(1, c.graphDefinition, c.graphTaskHint)}
       <div class="workspace">
         <div class="workspace-head"><div><h3>${c.graphTask}</h3><p>${c.graphTaskHint}</p></div></div>
+        <section class="kg-explainer">
+          <h4>${c.kgFormulaTitle}</h4>
+          <div class="kg-parts">${knowledgeParts}</div>
+          <p class="kg-result">${c.kgFormulaResult}</p>
+        </section>
         <div class="graph-wrap">${graphSVG({ activeEdges: state.activeEdges, activeNode: state.selectedNode })}</div>
         ${legend()}
         ${inspector()}
@@ -397,18 +403,25 @@
     const resultTable = solved ? `<table class="results beatles-results"><thead><tr>${question.columns.map(column => `<th>?${escapeHtml(column)}</th>`).join('')}</tr></thead><tbody>${question.rows.map(row => `<tr>${row.map(value => `<td><code>${escapeHtml(value)}</code></td>`).join('')}</tr>`).join('')}</tbody></table>` : '';
     const feedback = solved ? c.challengeCorrect : checked ? c.challengeWrong : '';
     const conclusions = c.conclusions.map(([title, description]) => `<article class="conclusion"><h4>${escapeHtml(title)}</h4><p>${escapeHtml(description)}</p></article>`).join('');
+    const kindSummary = Object.entries(c.beatlesKinds).map(([kind, label]) => `<span class="${kind}"><b>${model.beatlesNodes.filter(node => node.kind === kind).length}</b>${escapeHtml(label)}</span>`).join('');
     return `<div class="stage">
       ${guide(6, c.challengeText)}
       <div class="workspace">
         <div class="workspace-head beatles-head"><div><h3>${c.challengeTitle}</h3><p>${c.challengeIntro}</p></div><span class="stat">${c.challengeProgress(progress)}</span></div>
+        <section class="advanced-graph-intro">
+          <div><h4>${c.advancedGraphTitle}</h4><p>${c.advancedGraphText}</p></div>
+          <div class="kind-summary">${kindSummary}</div>
+        </section>
         <section class="panel beatles-graph-panel">
           ${beatlesGraphSVG(question, solved)}
           <div class="beatles-legend">${Object.entries(c.beatlesRelations).map(([id, label]) => `<span><i class="${id}"></i>${escapeHtml(label)}</span>`).join('')}</div>
         </section>
+        <h4 class="sparql-route-title">${c.sparqlRouteTitle}</h4>
         <div class="beatles-question-tabs">${questionTabs}</div>
         <section class="panel beatles-question">
-          <div class="panel-title"><span>${escapeHtml(text(question.concept))}</span><span>${state.beatlesQuestion + 1}/4</span></div>
+          <div class="panel-title"><span>${escapeHtml(text(question.concept))}</span><span>${state.beatlesQuestion + 1}/${model.beatlesQuestions.length}</span></div>
           <h4>${escapeHtml(text(question.question))}</h4>
+          <p class="beatles-explanation">${escapeHtml(text(question.explanation))}</p>
           ${question.id === 'types' ? `<p class="beatles-hint">${c.challengeRdfType}</p>` : ''}
           <div class="beatles-query-grid">
             <div>
