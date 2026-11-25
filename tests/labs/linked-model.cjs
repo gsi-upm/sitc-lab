@@ -13,9 +13,12 @@ assert.equal(model.edges.filter(edge => edge.extracted).length, 5);
 assert.equal(model.edges.filter(edge => edge.external).length, 2);
 assert.equal(model.copy.es.steps.length, 7);
 assert.equal(model.copy.en.steps.length, 7);
+assert.equal(model.copy.es.tabLabels.length, 7);
+assert.equal(model.copy.en.tabLabels.length, 7);
 assert.equal(model.queries.length, 3);
 assert.deepEqual([...model.queries[1].edges], ['partOf', 'city', 'country']);
 assert.ok(model.queries[1].code.includes('?university'));
+assert.ok(model.queries[1].code.includes('org:unitOf'));
 assert.equal(model.nodes.find(node => node.id === '1971').kind, 'literal');
 assert.equal(model.nodes.find(node => node.id === 'madrid').uri, 'dbr:Madrid');
 

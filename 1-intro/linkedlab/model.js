@@ -2,18 +2,18 @@
    learner can follow every fact from the text to RDF and SPARQL. */
 window.LinkedLabModel = (() => {
   const nodes = [
-    { id: 'gsi', kind: 'resource', type: 'organization', x: 120, y: 220, label: { es: 'GSI', en: 'GSI' }, uri: 'ex:gsi' },
-    { id: 'upm', kind: 'resource', type: 'university', x: 350, y: 220, label: { es: 'UPM', en: 'UPM' }, uri: 'ex:upm' },
-    { id: 'madrid', kind: 'resource', type: 'city', x: 585, y: 220, label: { es: 'Madrid', en: 'Madrid' }, uri: 'dbr:Madrid' },
-    { id: 'spain', kind: 'resource', type: 'country', x: 810, y: 220, label: { es: 'España', en: 'Spain' }, uri: 'dbr:Spain' },
-    { id: 'university', kind: 'resource', type: 'class', x: 350, y: 70, label: { es: 'Universidad', en: 'University' }, uri: 'dbo:University' },
-    { id: '1971', kind: 'literal', type: 'year', x: 350, y: 385, label: { es: '1971', en: '1971' }, uri: '"1971"^^xsd:gYear' },
-    { id: 'dbpedia-upm', kind: 'external', type: 'university', x: 585, y: 385, label: { es: 'UPM en DBpedia', en: 'UPM in DBpedia' }, uri: 'dbr:Technical_University_of_Madrid' },
-    { id: 'europe', kind: 'external', type: 'continent', x: 810, y: 70, label: { es: 'Europa', en: 'Europe' }, uri: 'dbr:Europe' }
+    { id: 'gsi', kind: 'resource', type: 'organization', x: 85, y: 220, label: { es: 'GSI', en: 'GSI' }, uri: 'ex:gsi' },
+    { id: 'upm', kind: 'resource', type: 'university', x: 275, y: 220, label: { es: 'UPM', en: 'UPM' }, uri: 'ex:upm' },
+    { id: 'madrid', kind: 'resource', type: 'city', x: 465, y: 220, label: { es: 'Madrid', en: 'Madrid' }, uri: 'dbr:Madrid' },
+    { id: 'spain', kind: 'resource', type: 'country', x: 655, y: 220, label: { es: 'España', en: 'Spain' }, uri: 'dbr:Spain' },
+    { id: 'university', kind: 'resource', type: 'class', x: 275, y: 70, label: { es: 'Universidad', en: 'University' }, uri: 'dbo:University' },
+    { id: '1971', kind: 'literal', type: 'year', x: 275, y: 385, label: { es: '1971', en: '1971' }, uri: '"1971"^^xsd:gYear' },
+    { id: 'dbpedia-upm', kind: 'external', type: 'university', x: 465, y: 385, label: { es: 'UPM en DBpedia', en: 'UPM in DBpedia' }, uri: 'dbr:Technical_University_of_Madrid' },
+    { id: 'europe', kind: 'external', type: 'continent', x: 655, y: 70, label: { es: 'Europa', en: 'Europe' }, uri: 'dbr:Europe' }
   ];
 
   const edges = [
-    { id: 'partOf', source: 'gsi', target: 'upm', predicate: 'schema:parentOrganization', extracted: true, label: { es: 'pertenece a', en: 'belongs to' } },
+    { id: 'partOf', source: 'gsi', target: 'upm', predicate: 'org:unitOf', extracted: true, label: { es: 'pertenece a', en: 'belongs to' } },
     { id: 'type', source: 'upm', target: 'university', predicate: 'rdf:type', extracted: true, label: { es: 'es una', en: 'is a' } },
     { id: 'city', source: 'upm', target: 'madrid', predicate: 'dbo:city', extracted: true, label: { es: 'está en', en: 'is in' } },
     { id: 'founded', source: 'upm', target: '1971', predicate: 'dbo:foundingYear', extracted: true, label: { es: 'se fundó en', en: 'was founded in' } },
@@ -36,6 +36,7 @@ window.LinkedLabModel = (() => {
       intro: 'Descubre cómo un texto se convierte en entidades y relaciones. Después expresa el mismo conocimiento con RDF, identifícalo con URI y consulta el grafo con SPARQL.',
       path: ['Texto', 'Grafo', 'RDF', 'URI', 'SPARQL', 'Linked Data', 'Reto'],
       steps: ['Extrae conocimiento', 'Entiende el grafo', 'Modela con RDF', 'Identifica y reutiliza', 'Consulta con SPARQL', 'Enlaza con DBpedia', 'Comprueba lo aprendido'],
+      tabLabels: ['Texto → grafo', 'Grafo', 'RDF', 'URI y vocabularios', 'SPARQL', 'Linked Data', 'Reto'],
       previous: 'Anterior', next: 'Siguiente', finish: 'Terminar',
       stepCount: n => `Paso ${n} de 7`,
       textLabel: 'Texto de partida', graphLabel: 'Grafo de conocimiento',
@@ -105,6 +106,7 @@ window.LinkedLabModel = (() => {
       intro: 'See how text becomes entities and relationships. Then express the same knowledge with RDF, identify it with URIs and query the graph with SPARQL.',
       path: ['Text', 'Graph', 'RDF', 'URI', 'SPARQL', 'Linked Data', 'Challenge'],
       steps: ['Extract knowledge', 'Understand the graph', 'Model with RDF', 'Identify and reuse', 'Query with SPARQL', 'Link to DBpedia', 'Check your understanding'],
+      tabLabels: ['Text → graph', 'Graph', 'RDF', 'URI & vocabularies', 'SPARQL', 'Linked Data', 'Challenge'],
       previous: 'Previous', next: 'Next', finish: 'Finish',
       stepCount: n => `Step ${n} of 7`,
       textLabel: 'Source text', graphLabel: 'Knowledge graph',
@@ -183,7 +185,7 @@ window.LinkedLabModel = (() => {
     {
       id: 'country-gsi',
       question: { es: '¿En qué país está el GSI?', en: 'Which country is GSI in?' },
-      code: 'PREFIX dbo:    <http://dbpedia.org/ontology/>\nPREFIX schema: <https://schema.org/>\nPREFIX ex:     <https://example.org/>\n\nSELECT ?country\nWHERE {\n  ex:gsi schema:parentOrganization ?university .\n  ?university dbo:city ?city .\n  ?city dbo:country ?country .\n}',
+      code: 'PREFIX dbo: <http://dbpedia.org/ontology/>\nPREFIX org: <http://www.w3.org/ns/org#>\nPREFIX ex:  <https://example.org/>\n\nSELECT ?country\nWHERE {\n  ex:gsi org:unitOf ?university .\n  ?university dbo:city ?city .\n  ?city dbo:country ?country .\n}',
       edges: ['partOf', 'city', 'country'],
       columns: ['country'],
       rows: [['dbr:Spain']]
@@ -202,7 +204,7 @@ window.LinkedLabModel = (() => {
     ex: 'https://example.org/',
     dbo: 'http://dbpedia.org/ontology/',
     dbr: 'http://dbpedia.org/resource/',
-    schema: 'https://schema.org/',
+    org: 'http://www.w3.org/ns/org#',
     rdf: 'http://www.w3.org/1999/02/22-rdf-syntax-ns#',
     owl: 'http://www.w3.org/2002/07/owl#',
     xsd: 'http://www.w3.org/2001/XMLSchema#'

@@ -8,7 +8,7 @@
     transformed: false,
     selectedNode: null,
     activeEdges: [],
-    selectedTriple: 'city',
+    selectedTriple: 'founded',
     fullUris: false,
     tripleCorrect: false,
     uriChoice: null,
@@ -107,7 +107,7 @@
     }).join('');
 
     return `
-      <svg class="knowledge-graph" viewBox="0 0 930 470" role="img" aria-label="${escapeHtml(copy().graphLabel)}">
+      <svg class="knowledge-graph" viewBox="0 0 740 470" role="img" aria-label="${escapeHtml(copy().graphLabel)}">
         <defs>
           <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0 0L10 5L0 10Z" fill="#c62977"></path></marker>
           <marker id="arrow-grey" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0 0L10 5L0 10Z" fill="#9da9b4"></path></marker>
@@ -214,7 +214,7 @@
       '@prefix ex: <https://example.org/> .',
       '@prefix dbo: <http://dbpedia.org/ontology/> .',
       '@prefix dbr: <http://dbpedia.org/resource/> .',
-      '@prefix schema: <https://schema.org/> .',
+      '@prefix org: <http://www.w3.org/ns/org#> .',
       '@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .',
       '@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .',
       ''
@@ -344,8 +344,8 @@
     const c = copy();
     const modelFeedback = state.challengeModel === null ? '' : state.challengeModel === 'a' ? c.modelCorrect : c.modelWrong;
     const queries = [
-      'SELECT ?city WHERE {\n  ex:oeg schema:parentOrganization ?university .\n  ?university dbo:city ?city .\n}',
-      'SELECT ?city WHERE {\n  ?city schema:parentOrganization ex:oeg .\n}',
+      'SELECT ?city WHERE {\n  ex:oeg org:unitOf ?university .\n  ?university dbo:city ?city .\n}',
+      'SELECT ?city WHERE {\n  ?city org:unitOf ex:oeg .\n}',
       'SELECT ?city WHERE {\n  ex:oeg ?city "UPM" .\n}'
     ];
     const queryButtons = state.challengeModel === 'a' ? `<div class="challenge-queries">${queries.map((query, index) => `<button data-challenge-query="${index}" class="${state.challengeQuery === index ? index === 0 ? 'correct' : 'wrong' : ''}">${escapeHtml(query)}</button>`).join('')}</div>` : '';
@@ -413,7 +413,7 @@
 
   function renderTabs() {
     const c = copy();
-    $('#tabs').innerHTML = c.steps.map((label, index) => `<button type="button" data-step="${index}" class="${state.step === index ? 'active' : ''}" ${state.step === index ? 'aria-current="step"' : ''}>${index + 1}. ${escapeHtml(label)}</button>`).join('');
+    $('#tabs').innerHTML = c.tabLabels.map((label, index) => `<button type="button" data-step="${index}" class="${state.step === index ? 'active' : ''}" ${state.step === index ? 'aria-current="step"' : ''}>${index + 1}. ${escapeHtml(label)}</button>`).join('');
     $$('#tabs [data-step]').forEach(button => button.addEventListener('click', () => { state.step = Number(button.dataset.step); state.activeEdges = []; state.selectedNode = null; render(); window.scrollTo({ top: $('#tabs').offsetTop - 10, behavior: 'smooth' }); }));
   }
 
