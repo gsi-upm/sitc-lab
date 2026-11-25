@@ -347,30 +347,38 @@
     }));
     const focus = activeEdges.length > 0 || explicitNodes.size > 0;
     const nodeByBeatlesId = id => model.beatlesNodes.find(node => node.id === id);
-    const colours = { vocals: '#c62977', bass: '#169c91', guitar: '#1d73b7', drums: '#d97820' };
+    const colours = { performedBy: '#c62977', plays: '#169c91' };
     const edgeMarkup = model.beatlesEdges.map(edge => {
       const source = nodeByBeatlesId(edge.source);
       const target = nodeByBeatlesId(edge.target);
       const active = activeEdges.includes(edge.id);
       const dim = focus && !active;
-      const colour = colours[edge.instrument];
-      const path = `M ${source.x + 74} ${source.y} C 305 ${source.y}, 465 ${target.y}, ${target.x - 46} ${target.y}`;
-      return `<path class="beatles-edge${active ? ' active' : ''}${dim ? ' dim' : ''}" data-beatles-edge="${edge.id}" d="${path}" style="--edge-colour:${colour}" marker-end="url(#beatles-${edge.instrument})"><title>${escapeHtml(edge.predicate)}</title></path>`;
+      const colour = colours[edge.kind];
+      const sourceRadius = source.kind === 'song' ? 74 : source.kind === 'musician' ? 46 : 64;
+      const targetRadius = target.kind === 'song' ? 74 : target.kind === 'musician' ? 46 : 64;
+      const startX = source.x + sourceRadius;
+      const endX = target.x - targetRadius;
+      const middleX = (startX + endX) / 2;
+      const path = `M ${startX} ${source.y} C ${middleX} ${source.y}, ${middleX} ${target.y}, ${endX} ${target.y}`;
+      return `<path class="beatles-edge${active ? ' active' : ''}${dim ? ' dim' : ''}" data-beatles-edge="${edge.id}" d="${path}" style="--edge-colour:${colour}" marker-end="url(#beatles-${edge.kind})"><title>${escapeHtml(edge.predicate)}</title></path>`;
     }).join('');
     const nodeMarkup = model.beatlesNodes.map(node => {
       const active = explicitNodes.has(node.id) || edgeNodes.has(node.id);
       const dim = focus && !active;
       const kind = c.beatlesKinds[node.kind];
-      const shape = node.kind === 'song'
-        ? `<rect x="${node.x - 72}" y="${node.y - 28}" width="144" height="56" rx="13"></rect>`
-        : `<circle cx="${node.x}" cy="${node.y}" r="42"></circle>`;
-      return `<g class="beatles-node ${node.kind}${active ? ' active' : ''}${dim ? ' dim' : ''}" data-beatles-node="${node.id}" role="img" aria-label="${escapeHtml(`${node.label}, ${kind}`)}">
+      const label = text(node.label);
+      const shape = node.kind === 'musician'
+        ? `<circle cx="${node.x}" cy="${node.y}" r="42"></circle>`
+        : node.kind === 'song'
+          ? `<rect x="${node.x - 72}" y="${node.y - 28}" width="144" height="56" rx="13"></rect>`
+          : `<rect x="${node.x - 62}" y="${node.y - 24}" width="124" height="48" rx="24"></rect>`;
+      return `<g class="beatles-node ${node.kind}${active ? ' active' : ''}${dim ? ' dim' : ''}" data-beatles-node="${node.id}" role="img" aria-label="${escapeHtml(`${label}, ${kind}`)}">
         <title>${escapeHtml(node.uri)}</title>${shape}
-        <text x="${node.x}" y="${node.y + 2}">${escapeHtml(node.label)}</text>
+        <text x="${node.x}" y="${node.y + 2}">${escapeHtml(label)}</text>
         <text class="node-type" x="${node.x}" y="${node.y + 17}">${escapeHtml(kind)}</text>
       </g>`;
     }).join('');
-    return `<svg class="beatles-graph" viewBox="0 0 760 410" role="img" aria-label="${escapeHtml(c.challengeTitle)}">
+    return `<svg class="beatles-graph" viewBox="0 0 980 485" role="img" aria-label="${escapeHtml(c.challengeTitle)}">
       <defs>${Object.entries(colours).map(([name, colour]) => `<marker id="beatles-${name}" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10Z" fill="${colour}"></path></marker>`).join('')}</defs>
       ${edgeMarkup}${nodeMarkup}
     </svg>`;
@@ -395,7 +403,7 @@
         <div class="workspace-head beatles-head"><div><h3>${c.challengeTitle}</h3><p>${c.challengeIntro}</p></div><span class="stat">${c.challengeProgress(progress)}</span></div>
         <section class="panel beatles-graph-panel">
           ${beatlesGraphSVG(question, solved)}
-          <div class="beatles-legend">${Object.entries(c.beatlesInstruments).map(([id, label]) => `<span><i class="${id}"></i>${escapeHtml(label)}</span>`).join('')}</div>
+          <div class="beatles-legend">${Object.entries(c.beatlesRelations).map(([id, label]) => `<span><i class="${id}"></i>${escapeHtml(label)}</span>`).join('')}</div>
         </section>
         <div class="beatles-question-tabs">${questionTabs}</div>
         <section class="panel beatles-question">

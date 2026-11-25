@@ -87,16 +87,16 @@ window.LinkedLabModel = (() => {
       linkedNote: 'Las relaciones en color proceden del texto. Las grises representan conocimiento que aparece al seguir enlaces externos.',
       challengeTitle: 'Laboratorio final: consulta el grafo de los Beatles',
       challengeText: 'Aplica SPARQL a un grafo nuevo, inspirado en el notebook de los Beatles. Resuelve cuatro preguntas de dificultad creciente sin instalar Fuseki.',
-      challengeIntro: 'Las canciones se conectan con músicos mediante propiedades que representan el instrumento o la función. Los colores distinguen voz, bajo, guitarra y batería.',
+      challengeIntro: 'Las canciones se enlazan con músicos; los músicos, con instrumentos. Los dos colores distinguen las relaciones “interpretada por” y “toca”.',
       challengeRdfType: 'En SPARQL, “a” es una abreviatura de rdf:type.',
-      beatlesKinds: { song: 'Canción', musician: 'Músico' },
-      beatlesInstruments: { vocals: 'Voz', bass: 'Bajo', guitar: 'Guitarra', drums: 'Batería' },
+      beatlesKinds: { song: 'Canción', musician: 'Músico', instrument: 'Instrumento' },
+      beatlesRelations: { performedBy: 'Interpretada por', plays: 'Toca' },
       challengeProgress: n => `${n} de 4 resueltas`,
       challengeChoose: 'Elige una consulta', challengeCheck: 'Comprobar consulta',
       challengeCorrect: 'Correcto: la consulta responde a la pregunta sobre este grafo.',
       challengeWrong: 'Esa consulta no sigue el patrón necesario. Revisa la dirección de las relaciones y las variables.',
       challengeResult: 'Resultado sobre este grafo',
-      challengeComplete: 'Has resuelto DISTINCT, el recorrido del grafo, COUNT y OPTIONAL.',
+      challengeComplete: 'Has resuelto DISTINCT, un recorrido de dos saltos, COUNT con GROUP BY y una condición HAVING.',
       challengeSource: 'Ejercicio adaptado del notebook SPARQL de los Beatles',
       conclusionsTitle: 'Qué debes recordar',
       conclusions: [
@@ -163,16 +163,16 @@ window.LinkedLabModel = (() => {
       linkedNote: 'Coloured relationships come from the text. Grey ones represent knowledge found by following external links.',
       challengeTitle: 'Final laboratory: query the Beatles graph',
       challengeText: 'Apply SPARQL to a new graph inspired by the Beatles notebook. Solve four increasingly difficult questions without installing Fuseki.',
-      challengeIntro: 'Songs connect to musicians through properties representing an instrument or role. Colours distinguish vocals, bass, guitar and drums.',
+      challengeIntro: 'Songs link to musicians, and musicians link to instruments. The two colours distinguish “performed by” and “plays”.',
       challengeRdfType: 'In SPARQL, “a” is shorthand for rdf:type.',
-      beatlesKinds: { song: 'Song', musician: 'Musician' },
-      beatlesInstruments: { vocals: 'Vocals', bass: 'Bass', guitar: 'Guitar', drums: 'Drums' },
+      beatlesKinds: { song: 'Song', musician: 'Musician', instrument: 'Instrument' },
+      beatlesRelations: { performedBy: 'Performed by', plays: 'Plays' },
       challengeProgress: n => `${n} of 4 solved`,
       challengeChoose: 'Choose a query', challengeCheck: 'Check query',
       challengeCorrect: 'Correct: the query answers the question over this graph.',
       challengeWrong: 'That query does not follow the required pattern. Check relationship direction and variables.',
       challengeResult: 'Result over this graph',
-      challengeComplete: 'You solved DISTINCT, graph traversal, COUNT and OPTIONAL.',
+      challengeComplete: 'You solved DISTINCT, a two-hop traversal, COUNT with GROUP BY and a HAVING condition.',
       challengeSource: 'Exercise adapted from the Beatles SPARQL notebook',
       conclusionsTitle: 'What to remember',
       conclusions: [
@@ -215,32 +215,44 @@ window.LinkedLabModel = (() => {
   // A compact, deterministic subset inspired by the Beatles SPARQL notebook.
   // It is embedded so the final exercise works without Fuseki or network access.
   const beatlesNodes = [
-    { id: 'hey-jude', kind: 'song', x: 105, y: 85, label: 'Hey Jude', uri: 'song:HeyJude' },
-    { id: 'come-together', kind: 'song', x: 105, y: 210, label: 'Come Together', uri: 'song:ComeTogether' },
-    { id: 'flying', kind: 'song', x: 105, y: 335, label: 'Flying', uri: 'song:Flying' },
-    { id: 'john', kind: 'musician', x: 650, y: 55, label: 'John Lennon', uri: 'm:JohnLennon' },
-    { id: 'paul', kind: 'musician', x: 650, y: 145, label: 'Paul McCartney', uri: 'm:PaulMcCartney' },
-    { id: 'george', kind: 'musician', x: 650, y: 245, label: 'George Harrison', uri: 'm:GeorgeHarrison' },
-    { id: 'ringo', kind: 'musician', x: 650, y: 345, label: 'Ringo Starr', uri: 'm:RingoStarr' }
+    { id: 'hey-jude', kind: 'song', x: 105, y: 105, label: 'Hey Jude', uri: 'song:HeyJude' },
+    { id: 'come-together', kind: 'song', x: 105, y: 250, label: 'Come Together', uri: 'song:ComeTogether' },
+    { id: 'yesterday', kind: 'song', x: 105, y: 395, label: 'Yesterday', uri: 'song:Yesterday' },
+    { id: 'john', kind: 'musician', x: 485, y: 65, label: 'John Lennon', uri: 'm:JohnLennon' },
+    { id: 'paul', kind: 'musician', x: 485, y: 180, label: 'Paul McCartney', uri: 'm:PaulMcCartney' },
+    { id: 'george', kind: 'musician', x: 485, y: 305, label: 'George Harrison', uri: 'm:GeorgeHarrison' },
+    { id: 'ringo', kind: 'musician', x: 485, y: 430, label: 'Ringo Starr', uri: 'm:RingoStarr' },
+    { id: 'vocals', kind: 'instrument', x: 875, y: 45, label: { es: 'Voz', en: 'Vocals' }, uri: 'i:Vocals' },
+    { id: 'guitar', kind: 'instrument', x: 875, y: 140, label: { es: 'Guitarra', en: 'Guitar' }, uri: 'i:Guitar' },
+    { id: 'bass', kind: 'instrument', x: 875, y: 235, label: { es: 'Bajo', en: 'Bass' }, uri: 'i:Bass' },
+    { id: 'piano', kind: 'instrument', x: 875, y: 330, label: 'Piano', uri: 'i:Piano' },
+    { id: 'drums', kind: 'instrument', x: 875, y: 425, label: { es: 'Batería', en: 'Drums' }, uri: 'i:Drums' }
   ];
 
   const beatlesEdges = [
-    { id: 'hj-vocals', source: 'hey-jude', target: 'john', predicate: 'i:vocals', instrument: 'vocals' },
-    { id: 'hj-bass', source: 'hey-jude', target: 'paul', predicate: 'i:bass', instrument: 'bass' },
-    { id: 'hj-guitar', source: 'hey-jude', target: 'george', predicate: 'i:guitar', instrument: 'guitar' },
-    { id: 'hj-drums', source: 'hey-jude', target: 'ringo', predicate: 'i:drums', instrument: 'drums' },
-    { id: 'ct-vocals', source: 'come-together', target: 'john', predicate: 'i:vocals', instrument: 'vocals' },
-    { id: 'ct-bass', source: 'come-together', target: 'paul', predicate: 'i:bass', instrument: 'bass' },
-    { id: 'ct-drums', source: 'come-together', target: 'ringo', predicate: 'i:drums', instrument: 'drums' },
-    { id: 'fl-bass', source: 'flying', target: 'paul', predicate: 'i:bass', instrument: 'bass' },
-    { id: 'fl-guitar', source: 'flying', target: 'george', predicate: 'i:guitar', instrument: 'guitar' },
-    { id: 'fl-drums', source: 'flying', target: 'ringo', predicate: 'i:drums', instrument: 'drums' }
+    { id: 'hj-john', source: 'hey-jude', target: 'john', predicate: 'ex:performedBy', kind: 'performedBy' },
+    { id: 'hj-paul', source: 'hey-jude', target: 'paul', predicate: 'ex:performedBy', kind: 'performedBy' },
+    { id: 'hj-george', source: 'hey-jude', target: 'george', predicate: 'ex:performedBy', kind: 'performedBy' },
+    { id: 'hj-ringo', source: 'hey-jude', target: 'ringo', predicate: 'ex:performedBy', kind: 'performedBy' },
+    { id: 'ct-john', source: 'come-together', target: 'john', predicate: 'ex:performedBy', kind: 'performedBy' },
+    { id: 'ct-paul', source: 'come-together', target: 'paul', predicate: 'ex:performedBy', kind: 'performedBy' },
+    { id: 'ct-george', source: 'come-together', target: 'george', predicate: 'ex:performedBy', kind: 'performedBy' },
+    { id: 'ct-ringo', source: 'come-together', target: 'ringo', predicate: 'ex:performedBy', kind: 'performedBy' },
+    { id: 'yd-paul', source: 'yesterday', target: 'paul', predicate: 'ex:performedBy', kind: 'performedBy' },
+    { id: 'john-vocals', source: 'john', target: 'vocals', predicate: 'ex:plays', kind: 'plays' },
+    { id: 'john-guitar', source: 'john', target: 'guitar', predicate: 'ex:plays', kind: 'plays' },
+    { id: 'paul-vocals', source: 'paul', target: 'vocals', predicate: 'ex:plays', kind: 'plays' },
+    { id: 'paul-bass', source: 'paul', target: 'bass', predicate: 'ex:plays', kind: 'plays' },
+    { id: 'paul-guitar', source: 'paul', target: 'guitar', predicate: 'ex:plays', kind: 'plays' },
+    { id: 'paul-piano', source: 'paul', target: 'piano', predicate: 'ex:plays', kind: 'plays' },
+    { id: 'george-guitar', source: 'george', target: 'guitar', predicate: 'ex:plays', kind: 'plays' },
+    { id: 'ringo-drums', source: 'ringo', target: 'drums', predicate: 'ex:plays', kind: 'plays' }
   ];
 
   const beatlesQuestions = [
     {
       id: 'types',
-      question: { es: '¿Qué tipos de entidades hay en el grafo?', en: 'Which entity types are in the graph?' },
+      question: { es: '¿Qué tipos de recursos hay en el grafo?', en: 'Which resource types are in the graph?' },
       concept: 'DISTINCT',
       options: [
         'PREFIX s: <http://learningsparql.com/ns/schema/>\n\nSELECT DISTINCT ?type\nWHERE {\n  ?entity a ?type .\n}',
@@ -249,54 +261,63 @@ window.LinkedLabModel = (() => {
       ],
       correct: 0,
       columns: ['type'],
-      rows: [['s:Song'], ['s:Musician']],
+      rows: [['s:Song'], ['s:Musician'], ['s:Instrument']],
       activeEdges: [],
       activeNodes: beatlesNodes.map(node => node.id)
     },
     {
-      id: 'hey-jude-musicians',
-      question: { es: '¿Qué músicos colaboraron en Hey Jude?', en: 'Which musicians collaborated on Hey Jude?' },
-      concept: { es: 'Recorrer el grafo', en: 'Graph traversal' },
+      id: 'hey-jude-instruments',
+      question: { es: '¿Qué músicos participaron en Hey Jude y qué instrumentos toca cada uno?', en: 'Which musicians performed on Hey Jude and which instruments does each one play?' },
+      concept: { es: 'Dos saltos', en: 'Two hops' },
       options: [
-        'PREFIX s: <http://learningsparql.com/ns/schema/>\nPREFIX song: <http://learningsparql.com/ns/song/>\n\nSELECT DISTINCT ?musician\nWHERE {\n  ?musician ?instrument song:HeyJude .\n}',
-        'PREFIX s: <http://learningsparql.com/ns/schema/>\nPREFIX song: <http://learningsparql.com/ns/song/>\n\nSELECT DISTINCT ?musician\nWHERE {\n  song:HeyJude ?instrument ?musician .\n  ?musician a s:Musician .\n}',
-        'PREFIX s: <http://learningsparql.com/ns/schema/>\n\nSELECT DISTINCT ?musician\nWHERE {\n  ?musician a s:Musician .\n}'
+        'PREFIX ex: <https://example.org/beatles/>\nPREFIX song: <http://learningsparql.com/ns/song/>\n\nSELECT DISTINCT ?musician ?instrument\nWHERE {\n  ?musician ex:performedBy song:HeyJude .\n  ?instrument ex:plays ?musician .\n}',
+        'PREFIX ex: <https://example.org/beatles/>\nPREFIX song: <http://learningsparql.com/ns/song/>\n\nSELECT DISTINCT ?musician ?instrument\nWHERE {\n  song:HeyJude ex:performedBy ?musician .\n  ?musician ex:plays ?instrument .\n}\nORDER BY ?musician ?instrument',
+        'PREFIX ex: <https://example.org/beatles/>\nPREFIX song: <http://learningsparql.com/ns/song/>\n\nSELECT DISTINCT ?musician ?instrument\nWHERE {\n  song:HeyJude ex:plays ?instrument .\n  ?instrument ex:performedBy ?musician .\n}'
       ],
       correct: 1,
-      columns: ['musician'],
-      rows: [['m:JohnLennon'], ['m:PaulMcCartney'], ['m:GeorgeHarrison'], ['m:RingoStarr']],
-      activeEdges: ['hj-vocals', 'hj-bass', 'hj-guitar', 'hj-drums'],
+      columns: ['musician', 'instrument'],
+      rows: [
+        ['m:GeorgeHarrison', 'i:Guitar'],
+        ['m:JohnLennon', 'i:Guitar'],
+        ['m:JohnLennon', 'i:Vocals'],
+        ['m:PaulMcCartney', 'i:Bass'],
+        ['m:PaulMcCartney', 'i:Guitar'],
+        ['m:PaulMcCartney', 'i:Piano'],
+        ['m:PaulMcCartney', 'i:Vocals'],
+        ['m:RingoStarr', 'i:Drums']
+      ],
+      activeEdges: ['hj-john', 'hj-paul', 'hj-george', 'hj-ringo', 'john-vocals', 'john-guitar', 'paul-vocals', 'paul-bass', 'paul-guitar', 'paul-piano', 'george-guitar', 'ringo-drums'],
       activeNodes: []
     },
     {
-      id: 'ringo-count',
-      question: { es: '¿En cuántas canciones colaboró Ringo Starr?', en: 'How many songs did Ringo Starr collaborate on?' },
-      concept: 'COUNT',
+      id: 'instrument-count',
+      question: { es: '¿Qué instrumento está asociado a más músicos?', en: 'Which instrument is associated with the most musicians?' },
+      concept: 'GROUP BY',
       options: [
-        'PREFIX m: <http://learningsparql.com/ns/musician/>\n\nSELECT ?song\nWHERE {\n  ?song ?instrument m:RingoStarr .\n}',
-        'PREFIX m: <http://learningsparql.com/ns/musician/>\n\nSELECT (COUNT(?instrument) AS ?number)\nWHERE {\n  m:RingoStarr ?instrument ?song .\n}',
-        'PREFIX m: <http://learningsparql.com/ns/musician/>\n\nSELECT (COUNT(DISTINCT ?song) AS ?number)\nWHERE {\n  ?song ?instrument m:RingoStarr .\n}'
+        'PREFIX ex: <https://example.org/beatles/>\n\nSELECT ?instrument ?musician\nWHERE {\n  ?musician ex:plays ?instrument .\n}\nORDER BY ?instrument',
+        'PREFIX ex: <https://example.org/beatles/>\n\nSELECT ?instrument (COUNT(?musician) AS ?musicians)\nWHERE {\n  ?musician ex:plays ?instrument .\n}\nORDER BY DESC(?musicians)\nLIMIT 1',
+        'PREFIX ex: <https://example.org/beatles/>\n\nSELECT ?instrument (COUNT(DISTINCT ?musician) AS ?musicians)\nWHERE {\n  ?musician ex:plays ?instrument .\n}\nGROUP BY ?instrument\nORDER BY DESC(?musicians)\nLIMIT 1'
       ],
       correct: 2,
-      columns: ['number'],
-      rows: [['3']],
-      activeEdges: ['hj-drums', 'ct-drums', 'fl-drums'],
+      columns: ['instrument', 'musicians'],
+      rows: [['i:Guitar', '3']],
+      activeEdges: ['john-vocals', 'john-guitar', 'paul-vocals', 'paul-bass', 'paul-guitar', 'paul-piano', 'george-guitar', 'ringo-drums'],
       activeNodes: []
     },
     {
-      id: 'vocalists',
-      question: { es: '¿Quién canta en cada canción, incluso si no hay cantante?', en: 'Who sings on each song, even when there is no vocalist?' },
-      concept: 'OPTIONAL',
+      id: 'all-songs',
+      question: { es: '¿Qué músico aparece en las tres canciones?', en: 'Which musician appears on all three songs?' },
+      concept: 'HAVING',
       options: [
-        'PREFIX s: <http://learningsparql.com/ns/schema/>\nPREFIX i: <http://learningsparql.com/ns/instrument/>\n\nSELECT ?song ?vocalist\nWHERE {\n  ?song a s:Song .\n  ?song i:vocals ?vocalist .\n}',
-        'PREFIX s: <http://learningsparql.com/ns/schema/>\nPREFIX i: <http://learningsparql.com/ns/instrument/>\n\nSELECT ?song ?vocalist\nWHERE {\n  ?song a s:Song .\n  OPTIONAL { ?song i:vocals ?vocalist . }\n}',
-        'PREFIX s: <http://learningsparql.com/ns/schema/>\nPREFIX i: <http://learningsparql.com/ns/instrument/>\n\nSELECT ?song ?vocalist\nWHERE {\n  ?song a s:Song .\n  OPTIONAL { ?vocalist i:vocals ?song . }\n}'
+        'PREFIX ex: <https://example.org/beatles/>\n\nSELECT ?musician (COUNT(DISTINCT ?song) AS ?songs)\nWHERE {\n  ?song ex:performedBy ?musician .\n}\nHAVING (COUNT(DISTINCT ?song) >= 3)',
+        'PREFIX ex: <https://example.org/beatles/>\n\nSELECT ?musician (COUNT(DISTINCT ?song) AS ?songs)\nWHERE {\n  ?song ex:performedBy ?musician .\n}\nGROUP BY ?musician\nHAVING (COUNT(DISTINCT ?song) >= 3)\nORDER BY DESC(?songs)',
+        'PREFIX ex: <https://example.org/beatles/>\n\nSELECT ?musician (COUNT(DISTINCT ?song) AS ?songs)\nWHERE {\n  ?musician ex:performedBy ?song .\n}\nGROUP BY ?musician\nHAVING (COUNT(DISTINCT ?song) >= 3)'
       ],
       correct: 1,
-      columns: ['song', 'vocalist'],
-      rows: [['song:HeyJude', 'm:JohnLennon'], ['song:ComeTogether', 'm:JohnLennon'], ['song:Flying', '—']],
-      activeEdges: ['hj-vocals', 'ct-vocals'],
-      activeNodes: ['flying']
+      columns: ['musician', 'songs'],
+      rows: [['m:PaulMcCartney', '3']],
+      activeEdges: ['hj-john', 'hj-paul', 'hj-george', 'hj-ringo', 'ct-john', 'ct-paul', 'ct-george', 'ct-ringo', 'yd-paul'],
+      activeNodes: []
     }
   ];
 

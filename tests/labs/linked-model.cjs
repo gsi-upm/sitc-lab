@@ -21,10 +21,16 @@ assert.ok(model.queries[1].code.includes('?university'));
 assert.ok(model.queries[1].code.includes('org:unitOf'));
 assert.equal(model.nodes.find(node => node.id === '1971').kind, 'literal');
 assert.equal(model.nodes.find(node => node.id === 'madrid').uri, 'dbr:Madrid');
-assert.equal(model.beatlesNodes.length, 7);
-assert.equal(model.beatlesEdges.length, 10);
+assert.equal(model.beatlesNodes.length, 12);
+assert.equal(model.beatlesNodes.filter(node => node.kind === 'instrument').length, 5);
+assert.equal(model.beatlesEdges.length, 17);
+assert.equal(model.beatlesEdges.filter(edge => edge.kind === 'performedBy').length, 9);
+assert.equal(model.beatlesEdges.filter(edge => edge.kind === 'plays').length, 8);
 assert.equal(model.beatlesQuestions.length, 4);
 assert.deepEqual([...model.beatlesQuestions.map(question => question.correct)], [0, 1, 2, 1]);
+assert.ok(model.beatlesQuestions.some(question => question.options.some(option => option.includes('GROUP BY'))));
+assert.ok(model.beatlesQuestions.some(question => question.options.some(option => option.includes('HAVING'))));
+assert.ok(!model.beatlesQuestions.some(question => question.options.some(option => /REGEX/i.test(option))));
 assert.ok(model.copy.es.rdfDefinition.includes('tripla'));
 assert.ok(!model.copy.es.rdfDefinition.includes('triple'));
 

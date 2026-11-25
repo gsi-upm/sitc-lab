@@ -162,18 +162,18 @@ pre{margin:0;white-space:pre-wrap;overflow-wrap:anywhere;font:500 .85rem/1.7 "DM
 
 .beatles-head p{max-width:660px}.beatles-head .stat{flex:0 0 auto}
 .beatles-graph-panel{padding:10px 14px 12px;background:linear-gradient(180deg,#fbfdff,#f4f8fb)}
-.beatles-graph{display:block;width:100%;height:auto;min-height:365px}
+.beatles-graph{display:block;width:100%;height:auto;min-height:410px}
 .beatles-edge{fill:none;stroke:var(--edge-colour);stroke-width:2.2;opacity:.52;transition:.2s ease}
 .beatles-edge.active{stroke-width:4.5;opacity:1}.beatles-edge.dim{opacity:.07}
 .beatles-node{transition:.2s ease}.beatles-node rect,.beatles-node circle{fill:white;stroke:#79a9d2;stroke-width:2.5}
-.beatles-node.song rect{fill:#eaf4fd}.beatles-node.musician circle{fill:#edf9f7;stroke:#55a99f}
+.beatles-node.song rect{fill:#eaf4fd}.beatles-node.musician circle{fill:#edf9f7;stroke:#55a99f}.beatles-node.instrument rect{fill:#fff4e8;stroke:#d97820}
 .beatles-node text{fill:var(--ink);font-size:13px;font-weight:800;text-anchor:middle;pointer-events:none}
 .beatles-node .node-type{fill:var(--muted);font-size:9px;font-weight:700;text-transform:uppercase}
 .beatles-node.active rect,.beatles-node.active circle{stroke:var(--teal);stroke-width:4;filter:drop-shadow(0 4px 5px rgba(22,156,145,.18))}
 .beatles-node.dim{opacity:.22}
 .beatles-legend{display:flex;justify-content:center;gap:18px;flex-wrap:wrap;margin-top:-2px;color:var(--muted);font-size:.8rem;font-weight:700}
 .beatles-legend span{display:flex;align-items:center;gap:6px}.beatles-legend i{display:inline-block;width:22px;height:4px;border-radius:999px}
-.beatles-legend .vocals{background:#c62977}.beatles-legend .bass{background:#169c91}.beatles-legend .guitar{background:#1d73b7}.beatles-legend .drums{background:#d97820}
+.beatles-legend .performedBy{background:#c62977}.beatles-legend .plays{background:#169c91}
 .beatles-question-tabs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin:14px 0}
 .beatles-question-tabs button{position:relative;display:grid;grid-template-columns:28px 1fr;align-items:center;gap:7px;min-height:52px;border:1px solid var(--line);border-radius:11px;background:white;color:var(--ink);padding:8px;text-align:left}
 .beatles-question-tabs button span{display:grid;place-items:center;width:28px;height:28px;border-radius:50%;background:#edf3f7;color:var(--muted);font-weight:800}.beatles-question-tabs button b{font-size:.78rem}

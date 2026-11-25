@@ -54,8 +54,8 @@ const url = process.env.LINKED_URL || 'http://127.0.0.1:4180/1-intro/linkedlab/'
 
       await page.click('[data-step="6"]');
       assert.equal(await page.locator('#next').isEnabled(), false);
-      assert.equal(await page.locator('.beatles-node').count(), 7);
-      assert.equal(await page.locator('.beatles-edge').count(), 10);
+      assert.equal(await page.locator('.beatles-node').count(), 12);
+      assert.equal(await page.locator('.beatles-edge').count(), 17);
       for (const [question, answer] of [0, 1, 2, 3].map((question, index) => [question, [0, 1, 2, 1][index]])) {
         await page.click(`[data-beatles-question="${question}"]`);
         await page.click(`[data-beatles-choice="${answer}"]`);
