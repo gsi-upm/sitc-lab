@@ -1,5 +1,6 @@
 const copy={
   es:{
+    linkedTitle:'Del texto al grafo',linkedText:'Extrae un grafo de conocimiento, modélalo con RDF y consulta sus patrones con SPARQL.',
     llmTitle:'Construir contexto con atención',llmText:'Sigue las unidades (tokens), explora Q, K y V y recorre visualmente un bloque de transformador.',
     nlpTitle:'Del texto al significado',nlpText:'Explora palabras, construye TF-IDF y compara búsqueda semántica y análisis de sentimiento.',
     xaiTitle:'Entender una predicción',xaiText:'Explica el precio de una vivienda con ejemplos, regiones, LIME, SHAP y contrafactuales.',
@@ -10,8 +11,8 @@ const copy={
     navLabs:'Laboratorios',navAbout:'Acerca de',eyebrow:'Laboratorios interactivos · UPM',title:'Aprende experimentando',
     lede:'Una colección breve de laboratorios para entender cómo aprenden los modelos y cómo evaluamos sus predicciones.',
     cta:'Explorar laboratorios ↓',heroNote:'Datos → modelo → evidencia',sectionEyebrow:'Elige un laboratorio',
-    sectionTitle:'Once formas de aprender experimentando',
-    sectionText:'Empieza por PromptLab y avanza hacia la clasificación, la geometría, la regresión, los árboles, los conjuntos de modelos, los algoritmos genéticos, el aprendizaje por refuerzo, la explicabilidad, el lenguaje natural y los transformadores (Transformers). Cada laboratorio se puede abrir directamente desde este panel.',
+    sectionTitle:'Doce formas de aprender experimentando',
+    sectionText:'Empieza por PromptLab y avanza hacia la clasificación, la geometría, la regresión, los árboles, los conjuntos de modelos, los algoritmos genéticos, el aprendizaje por refuerzo, la explicabilidad, el lenguaje natural, los transformadores (Transformers) y Linked Data. Cada laboratorio se puede abrir directamente desde este panel.',
     promptKicker:'01 · PromptLab',promptTitle:'Diseñar mejores instrucciones',promptText:'Descubre cómo una instrucción cambia la respuesta de un modelo de lenguaje.',
     classifierKicker:'02 · ClassifierLab',classifierTitle:'Cuando la exactitud no basta',classifierText:'Explora matrices de confusión, precisión, recall, F1 y curvas ROC con datos desbalanceados.',
     geoKicker:'04 · GeometricLab',geoTitle:'Modelos y fronteras',geoText:'Compara algoritmos, hiperparámetros y el efecto del ruido en la frontera de decisión.',
@@ -19,6 +20,7 @@ const copy={
     open:'Abrir laboratorio →',aboutEyebrow:'Una ruta de aprendizaje',aboutText:'Observa → cambia una cosa → compara → piensa. Los laboratorios están pensados para sesiones cortas y para aprender haciendo.'
   },
   en:{
+    linkedTitle:'From text to graph',linkedText:'Extract a knowledge graph, model it with RDF and query its patterns with SPARQL.',
     llmTitle:'Build context with attention',llmText:'Follow the tokens, explore Q, K and V, and travel visually through a Transformer block.',
     nlpTitle:'From text to meaning',nlpText:'Explore words, build TF-IDF and compare semantic search and sentiment analysis.',
     xaiTitle:'Understand a prediction',xaiText:'Explain a home price with examples, regions, LIME, SHAP and counterfactuals.',
@@ -29,8 +31,8 @@ const copy={
     navLabs:'Laboratories',navAbout:'About',eyebrow:'Interactive laboratories · UPM',title:'Learn by experimenting',
     lede:'A short collection of laboratories to understand how models learn and how we evaluate their predictions.',
     cta:'Explore laboratories ↓',heroNote:'Data → model → evidence',sectionEyebrow:'Choose a laboratory',
-    sectionTitle:'Eleven ways to learn by experimenting',
-    sectionText:'Start with PromptLab and move through classification, geometry, regression, trees, ensembles, genetic algorithms, reinforcement learning, explainability, natural language and Transformers. Open each laboratory directly from this panel.',
+    sectionTitle:'Twelve ways to learn by experimenting',
+    sectionText:'Start with PromptLab and move through classification, geometry, regression, trees, ensembles, genetic algorithms, reinforcement learning, explainability, natural language, Transformers and Linked Data. Open each laboratory directly from this panel.',
     promptKicker:'01 · PromptLab',promptTitle:'Design better instructions',promptText:'Discover how an instruction changes a language model’s response.',
     classifierKicker:'02 · ClassifierLab',classifierTitle:'When accuracy is not enough',classifierText:'Explore confusion matrices, precision, recall, F1 and ROC curves with imbalanced data.',
     geoKicker:'04 · GeometricLab',geoTitle:'Models and boundaries',geoText:'Compare algorithms, hyperparameters and the effect of noise on the decision boundary.',

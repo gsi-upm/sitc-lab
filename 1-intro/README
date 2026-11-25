@@ -8,12 +8,28 @@ Orden sugerido / Suggested order:
 2. ClassifierLab: classifierlab/index.html
 3. RegressionLab: regressionlab/index.html
 4. GeometricLab: mlgeometriclab/index.html
+5. TreeLab: treelab/index.html
+6. EnsembleLab: ensemblelab/index.html
+7. GeneticLab: geneticlab/index.html
+8. ReinforcementLab: reinforcementlab/index.html
+9. XAILab: xailab/index.html
+10. NLPLab: nlplab/index.html
+11. LLMLab: llmlab/index.html
+12. LinkedLab: linkedlab/index.html
 
 Publicación / Published site:
 https://gsi-upm.github.io/sitc-lab/1-intro/promptlab/
 https://gsi-upm.github.io/sitc-lab/1-intro/classifierlab/
 https://gsi-upm.github.io/sitc-lab/1-intro/regressionlab/
 https://gsi-upm.github.io/sitc-lab/1-intro/mlgeometriclab/
+https://gsi-upm.github.io/sitc-lab/1-intro/treelab/
+https://gsi-upm.github.io/sitc-lab/1-intro/ensemblelab/
+https://gsi-upm.github.io/sitc-lab/1-intro/geneticlab/
+https://gsi-upm.github.io/sitc-lab/1-intro/reinforcementlab/
+https://gsi-upm.github.io/sitc-lab/1-intro/xailab/
+https://gsi-upm.github.io/sitc-lab/1-intro/nlplab/
+https://gsi-upm.github.io/sitc-lab/1-intro/llmlab/
+https://gsi-upm.github.io/sitc-lab/1-intro/linkedlab/
 
 No build is required. Keep language.js beside the four laboratory directories.
 GitHub Pages publishes 1-intro through the existing pages.yml workflow.

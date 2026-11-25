@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="author" content="Carlos Á. Iglesias · Intelligent Systems Group · UPM">
+  <meta name="description" content="Laboratorio visual para transformar texto en un grafo de conocimiento y practicar RDF, URI, Linked Data y SPARQL.">
+  <title>LinkedLab · SITC Lab</title>
+  <link rel="stylesheet" href="../lab-navigation.css">
+  <link rel="stylesheet" href="styles.css?v=1">
+</head>
+<body>
+  <a class="skip" href="#lab">Saltar al laboratorio / Skip to laboratory</a>
+  <header>
+    <a class="brand" href="./"><b>Linked</b><span>Lab</span></a>
+    <small>Intelligent Systems Group · UPM</small>
+    <a class="labs-home" href="../../index.html"><span class="home-es">← Todos los laboratorios</span><span class="home-en">← All laboratories</span></a>
+    <select id="language" aria-label="Idioma / Language">
+      <option value="es">🇪🇸 Español</option>
+      <option value="en">🇬🇧 English</option>
+    </select>
+  </header>
+
+  <main id="lab">
+    <section class="intro">
+      <p class="eyebrow">SITC · UPM</p>
+      <h1 id="title"></h1>
+      <p id="intro"></p>
+      <div class="learning-path" id="learning-path" aria-label="Ruta de aprendizaje"></div>
+    </section>
+
+    <nav class="tabs" id="tabs" aria-label="Pasos del laboratorio"></nav>
+    <section id="content" aria-live="polite"></section>
+
+    <div class="step-navigation">
+      <button class="secondary" id="previous" type="button"></button>
+      <span id="step-count"></span>
+      <button class="primary" id="next" type="button"></button>
+    </div>
+    <p id="status" role="status" aria-live="polite"></p>
+  </main>
+
+  <footer>
+    © 2026 Carlos Á. Iglesias · Intelligent Systems Group · UPM ·
+    <a href="https://www.diffbot.com/docs/natural-language/" target="_blank" rel="noopener">Inspiración visual: Diffbot Natural Language API</a>
+  </footer>
+
+  <script src="model.js?v=1"></script>
+  <script src="app.js?v=1"></script>
+</body>
+</html>
