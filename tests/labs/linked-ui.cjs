@@ -54,8 +54,15 @@ const url = process.env.LINKED_URL || 'http://127.0.0.1:4180/1-intro/linkedlab/'
 
       await page.click('[data-step="6"]');
       assert.equal(await page.locator('#next').isEnabled(), false);
-      await page.click('[data-model="a"]');
-      await page.click('[data-challenge-query="0"]');
+      assert.equal(await page.locator('.beatles-node').count(), 7);
+      assert.equal(await page.locator('.beatles-edge').count(), 10);
+      for (const [question, answer] of [0, 1, 2, 3].map((question, index) => [question, [0, 1, 2, 1][index]])) {
+        await page.click(`[data-beatles-question="${question}"]`);
+        await page.click(`[data-beatles-choice="${answer}"]`);
+        await page.click('#check-beatles');
+        assert.equal(await page.locator('.beatles-answer.revealed').count(), 1);
+      }
+      assert.equal(await page.locator('.beatles-question-tabs .solved').count(), 4);
       assert.equal(await page.locator('#next').isEnabled(), true);
       await page.click('#next');
       assert.equal(await page.locator('#next').isEnabled(), false);
@@ -67,7 +74,7 @@ const url = process.env.LINKED_URL || 'http://127.0.0.1:4180/1-intro/linkedlab/'
       assert.deepEqual(errors, []);
       await page.screenshot({ path: `/tmp/linkedlab-${width}.png`, fullPage: true });
       await page.close();
-      console.log('LinkedLab text, graph, RDF, URI, SPARQL and Linked Data passed', width);
+      console.log('LinkedLab text, graph, RDF, URI, SPARQL, Linked Data and Beatles challenge passed', width);
     }
   } finally {
     await browser.close();

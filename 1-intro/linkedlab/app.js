@@ -16,8 +16,10 @@
     queryRan: false,
     external: false,
     classification: null,
-    challengeModel: null,
-    challengeQuery: null,
+    beatlesQuestion: 0,
+    beatlesAnswers: {},
+    beatlesChecked: {},
+    beatlesSolved: [],
     completed: false
   };
 
@@ -334,35 +336,86 @@
     </div>`;
   }
 
-  function miniGraph(type) {
-    if (type === 'a') return `<div class="mini-graph"><span class="mini-node">OEG</span><i class="mini-edge"></i><span class="mini-node">UPM</span><i class="mini-edge"></i><span class="mini-node">Madrid</span></div>`;
-    if (type === 'b') return `<div class="mini-graph"><span class="mini-node">OEG</span><i class="mini-edge"></i><span class="mini-node">Madrid</span></div>`;
-    return `<div class="mini-graph"><span class="mini-node">“OEG pertenece a UPM…”</span></div>`;
+  function beatlesGraphSVG(question, reveal) {
+    const c = copy();
+    const activeEdges = reveal ? question.activeEdges : [];
+    const explicitNodes = new Set(reveal ? question.activeNodes : []);
+    const edgeNodes = new Set(activeEdges.flatMap(id => {
+      const edge = model.beatlesEdges.find(item => item.id === id);
+      return edge ? [edge.source, edge.target] : [];
+    }));
+    const focus = activeEdges.length > 0 || explicitNodes.size > 0;
+    const nodeByBeatlesId = id => model.beatlesNodes.find(node => node.id === id);
+    const colours = { vocals: '#c62977', bass: '#169c91', guitar: '#1d73b7', drums: '#d97820' };
+    const edgeMarkup = model.beatlesEdges.map(edge => {
+      const source = nodeByBeatlesId(edge.source);
+      const target = nodeByBeatlesId(edge.target);
+      const active = activeEdges.includes(edge.id);
+      const dim = focus && !active;
+      const colour = colours[edge.instrument];
+      const path = `M ${source.x + 74} ${source.y} C 305 ${source.y}, 465 ${target.y}, ${target.x - 46} ${target.y}`;
+      return `<path class="beatles-edge${active ? ' active' : ''}${dim ? ' dim' : ''}" data-beatles-edge="${edge.id}" d="${path}" style="--edge-colour:${colour}" marker-end="url(#beatles-${edge.instrument})"><title>${escapeHtml(edge.predicate)}</title></path>`;
+    }).join('');
+    const nodeMarkup = model.beatlesNodes.map(node => {
+      const active = explicitNodes.has(node.id) || edgeNodes.has(node.id);
+      const dim = focus && !active;
+      const kind = c.beatlesKinds[node.kind];
+      const shape = node.kind === 'song'
+        ? `<rect x="${node.x - 72}" y="${node.y - 28}" width="144" height="56" rx="13"></rect>`
+        : `<circle cx="${node.x}" cy="${node.y}" r="42"></circle>`;
+      return `<g class="beatles-node ${node.kind}${active ? ' active' : ''}${dim ? ' dim' : ''}" data-beatles-node="${node.id}" role="img" aria-label="${escapeHtml(`${node.label}, ${kind}`)}">
+        <title>${escapeHtml(node.uri)}</title>${shape}
+        <text x="${node.x}" y="${node.y + 2}">${escapeHtml(node.label)}</text>
+        <text class="node-type" x="${node.x}" y="${node.y + 17}">${escapeHtml(kind)}</text>
+      </g>`;
+    }).join('');
+    return `<svg class="beatles-graph" viewBox="0 0 760 410" role="img" aria-label="${escapeHtml(c.challengeTitle)}">
+      <defs>${Object.entries(colours).map(([name, colour]) => `<marker id="beatles-${name}" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10Z" fill="${colour}"></path></marker>`).join('')}</defs>
+      ${edgeMarkup}${nodeMarkup}
+    </svg>`;
   }
 
   function renderChallenge() {
     const c = copy();
-    const modelFeedback = state.challengeModel === null ? '' : state.challengeModel === 'a' ? c.modelCorrect : c.modelWrong;
-    const queries = [
-      'SELECT ?city WHERE {\n  ex:oeg org:unitOf ?university .\n  ?university dbo:city ?city .\n}',
-      'SELECT ?city WHERE {\n  ?city org:unitOf ex:oeg .\n}',
-      'SELECT ?city WHERE {\n  ex:oeg ?city "UPM" .\n}'
-    ];
-    const queryButtons = state.challengeModel === 'a' ? `<div class="challenge-queries">${queries.map((query, index) => `<button data-challenge-query="${index}" class="${state.challengeQuery === index ? index === 0 ? 'correct' : 'wrong' : ''}">${escapeHtml(query)}</button>`).join('')}</div>` : '';
+    const question = model.beatlesQuestions[state.beatlesQuestion];
+    const answer = state.beatlesAnswers[question.id];
+    const checked = Boolean(state.beatlesChecked[question.id]);
+    const solved = state.beatlesSolved.includes(question.id);
+    const selectedCode = answer === undefined ? '' : question.options[answer];
+    const progress = state.beatlesSolved.length;
+    const questionTabs = model.beatlesQuestions.map((item, index) => `<button data-beatles-question="${index}" class="${state.beatlesQuestion === index ? 'active' : ''} ${state.beatlesSolved.includes(item.id) ? 'solved' : ''}"><span>${index + 1}</span><b>${escapeHtml(text(item.concept))}</b>${state.beatlesSolved.includes(item.id) ? '<i>✓</i>' : ''}</button>`).join('');
+    const choices = question.options.map((option, index) => `<button data-beatles-choice="${index}" class="${answer === index ? 'active' : ''}${checked && answer === index ? index === question.correct ? ' correct' : ' wrong' : ''}" aria-label="${c.challengeChoose} ${String.fromCharCode(65 + index)}">${String.fromCharCode(65 + index)}</button>`).join('');
+    const resultTable = solved ? `<table class="results beatles-results"><thead><tr>${question.columns.map(column => `<th>?${escapeHtml(column)}</th>`).join('')}</tr></thead><tbody>${question.rows.map(row => `<tr>${row.map(value => `<td><code>${escapeHtml(value)}</code></td>`).join('')}</tr>`).join('')}</tbody></table>` : '';
+    const feedback = solved ? c.challengeCorrect : checked ? c.challengeWrong : '';
     const conclusions = c.conclusions.map(([title, description]) => `<article class="conclusion"><h4>${escapeHtml(title)}</h4><p>${escapeHtml(description)}</p></article>`).join('');
     return `<div class="stage">
       ${guide(6, c.challengeText)}
       <div class="workspace">
-        <h3>${c.challengeTitle}</h3>
-        <div class="challenge-models">
-          <button class="model-choice ${state.challengeModel === 'a' ? 'correct' : ''}" data-model="a">${miniGraph('a')}<strong>${c.modelA}</strong></button>
-          <button class="model-choice ${state.challengeModel === 'b' ? 'wrong' : ''}" data-model="b">${miniGraph('b')}<strong>${c.modelB}</strong></button>
-          <button class="model-choice ${state.challengeModel === 'c' ? 'wrong' : ''}" data-model="c">${miniGraph('c')}<strong>${c.modelC}</strong></button>
-        </div>
-        <p class="feedback ${state.challengeModel ? state.challengeModel === 'a' ? 'good' : 'bad' : ''}">${modelFeedback}</p>
-        ${state.challengeModel === 'a' ? `<div class="quiz"><h4>${c.challengeQuery}</h4>${queryButtons}<p class="feedback ${state.challengeQuery === null ? '' : state.challengeQuery === 0 ? 'good' : 'bad'}">${state.challengeQuery === 0 ? c.challengeSuccess : state.challengeQuery === null ? '' : c.tryAgain}</p></div>` : ''}
-        <h3 style="margin-top:22px">${c.conclusionsTitle}</h3>
-        <div class="conclusions">${conclusions}</div>
+        <div class="workspace-head beatles-head"><div><h3>${c.challengeTitle}</h3><p>${c.challengeIntro}</p></div><span class="stat">${c.challengeProgress(progress)}</span></div>
+        <section class="panel beatles-graph-panel">
+          ${beatlesGraphSVG(question, solved)}
+          <div class="beatles-legend">${Object.entries(c.beatlesInstruments).map(([id, label]) => `<span><i class="${id}"></i>${escapeHtml(label)}</span>`).join('')}</div>
+        </section>
+        <div class="beatles-question-tabs">${questionTabs}</div>
+        <section class="panel beatles-question">
+          <div class="panel-title"><span>${escapeHtml(text(question.concept))}</span><span>${state.beatlesQuestion + 1}/4</span></div>
+          <h4>${escapeHtml(text(question.question))}</h4>
+          ${question.id === 'types' ? `<p class="beatles-hint">${c.challengeRdfType}</p>` : ''}
+          <div class="beatles-query-grid">
+            <div>
+              <div class="beatles-choice-head"><span>${c.challengeChoose}</span><div class="beatles-choice-buttons">${choices}</div></div>
+              <pre class="code-card beatles-code">${selectedCode ? escapeHtml(selectedCode) : 'A · B · C'}</pre>
+              <button class="primary" id="check-beatles" ${answer === undefined || solved ? 'disabled' : ''}>${c.challengeCheck}</button>
+              <p class="feedback ${solved ? 'good' : checked ? 'bad' : ''}">${feedback}</p>
+            </div>
+            <div class="beatles-answer ${solved ? 'revealed' : ''}">
+              <h4>${c.challengeResult}</h4>
+              ${solved ? resultTable : `<p>${c.matchIdle}</p>`}
+            </div>
+          </div>
+        </section>
+        <p class="source-note"><a href="https://github.com/gsi-upm/sitc/blob/master/lod/01_SPARQL_Introduction.ipynb" target="_blank" rel="noopener">${c.challengeSource}</a>.</p>
+        ${progress === model.beatlesQuestions.length ? `<div class="challenge-complete"><strong>${c.challengeComplete}</strong></div><h3>${c.conclusionsTitle}</h3><div class="conclusions">${conclusions}</div>` : ''}
       </div>
     </div>`;
   }
@@ -407,8 +460,21 @@
     $$('[data-query]').forEach(button => button.addEventListener('click', () => { state.queryIndex = Number(button.dataset.query); state.queryRan = false; renderContent(); }));
     $('#run-query')?.addEventListener('click', () => { state.queryRan = true; renderContent(); });
     $('#toggle-external')?.addEventListener('click', () => { state.external = !state.external; renderContent(); });
-    $$('[data-model]').forEach(button => button.addEventListener('click', () => { state.challengeModel = button.dataset.model; state.challengeQuery = null; render(); }));
-    $$('[data-challenge-query]').forEach(button => button.addEventListener('click', () => { state.challengeQuery = Number(button.dataset.challengeQuery); state.completed = false; render(); }));
+    $$('[data-beatles-question]').forEach(button => button.addEventListener('click', () => { state.beatlesQuestion = Number(button.dataset.beatlesQuestion); renderContent(); }));
+    $$('[data-beatles-choice]').forEach(button => button.addEventListener('click', () => {
+      const question = model.beatlesQuestions[state.beatlesQuestion];
+      if (state.beatlesSolved.includes(question.id)) return;
+      state.beatlesAnswers[question.id] = Number(button.dataset.beatlesChoice);
+      state.beatlesChecked[question.id] = false;
+      renderContent();
+    }));
+    $('#check-beatles')?.addEventListener('click', () => {
+      const question = model.beatlesQuestions[state.beatlesQuestion];
+      state.beatlesChecked[question.id] = true;
+      if (state.beatlesAnswers[question.id] === question.correct && !state.beatlesSolved.includes(question.id)) state.beatlesSolved.push(question.id);
+      state.completed = false;
+      render();
+    });
   }
 
   function renderTabs() {
@@ -424,7 +490,7 @@
     previous.textContent = c.previous;
     previous.disabled = state.step === 0;
     next.textContent = state.step === 6 ? c.finish : c.next;
-    next.disabled = state.step === 6 && (state.challengeQuery !== 0 || state.completed);
+    next.disabled = state.step === 6 && (state.beatlesSolved.length !== model.beatlesQuestions.length || state.completed);
     $('#step-count').textContent = c.stepCount(state.step + 1);
   }
 
@@ -445,7 +511,7 @@
   $('#previous').addEventListener('click', () => { if (state.step > 0) { state.step -= 1; state.activeEdges = []; state.selectedNode = null; render(); } });
   $('#next').addEventListener('click', () => {
     if (state.step < 6) { state.step += 1; state.activeEdges = []; state.selectedNode = null; render(); window.scrollTo({ top: $('#tabs').offsetTop - 10, behavior: 'smooth' }); }
-    else if (state.challengeQuery === 0) { state.completed = true; render(); }
+    else if (state.beatlesSolved.length === model.beatlesQuestions.length) { state.completed = true; render(); }
   });
 
   render();

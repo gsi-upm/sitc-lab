@@ -21,5 +21,11 @@ assert.ok(model.queries[1].code.includes('?university'));
 assert.ok(model.queries[1].code.includes('org:unitOf'));
 assert.equal(model.nodes.find(node => node.id === '1971').kind, 'literal');
 assert.equal(model.nodes.find(node => node.id === 'madrid').uri, 'dbr:Madrid');
+assert.equal(model.beatlesNodes.length, 7);
+assert.equal(model.beatlesEdges.length, 10);
+assert.equal(model.beatlesQuestions.length, 4);
+assert.deepEqual([...model.beatlesQuestions.map(question => question.correct)], [0, 1, 2, 1]);
+assert.ok(model.copy.es.rdfDefinition.includes('tripla'));
+assert.ok(!model.copy.es.rdfDefinition.includes('triple'));
 
-console.log('LinkedLab model, triples, queries and ES/EN copy passed');
+console.log('LinkedLab model, triplas, queries, Beatles challenge and ES/EN copy passed');
