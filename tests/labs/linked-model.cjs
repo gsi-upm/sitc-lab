@@ -34,6 +34,15 @@ assert.ok(model.moreBeatlesQuestions.some(question => question.options.some(opti
 assert.ok(model.moreBeatlesQuestions.some(question => question.options.some(option => option.includes('HAVING'))));
 assert.ok(model.moreBeatlesQuestions.some(question => question.id === 'song-instrument-count' && question.activeEdges.length === model.beatlesEdges.length));
 assert.ok(![...model.beatlesQuestions, ...model.moreBeatlesQuestions].some(question => question.options.some(option => /REGEX/i.test(option))));
+const preAnswerHints = [...model.beatlesQuestions, ...model.moreBeatlesQuestions]
+  .flatMap(question => [question.concept, question.explanation])
+  .map(value => JSON.stringify(value))
+  .join(' ');
+assert.doesNotMatch(preAnswerHints, /GROUP BY|HAVING|dos saltos|two hops/i);
+assert.doesNotMatch(
+  [...model.beatlesQuestions, ...model.moreBeatlesQuestions].map(question => JSON.stringify(question.concept)).join(' '),
+  /\bDISTINCT\b/i
+);
 assert.ok(model.copy.es.rdfDefinition.includes('tripla'));
 assert.ok(!model.copy.es.rdfDefinition.includes('triple'));
 

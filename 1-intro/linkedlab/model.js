@@ -95,7 +95,7 @@ window.LinkedLabModel = (() => {
       challengeTitle: 'Beatles: canciones y músicos',
       challengeText: 'Empieza con un grafo sencillo: las canciones se conectan con los músicos que las interpretan. Practica consultas SPARQL de un solo patrón.',
       challengeIntro: 'Cada flecha “interpretada por” expresa una relación entre una canción y un músico.',
-      challengeRouteTitle: 'SPARQL básico: encuentra patrones en el grafo',
+      challengeRouteTitle: 'Tres preguntas sobre canciones y músicos',
       challengeComplete: 'Has consultado tipos, músicos de una canción y canciones de un músico. Ya puedes ampliar el grafo con nuevos recursos y relaciones.',
       moreBeatlesTitle: 'Más Beatles: añade instrumentos',
       moreBeatlesText: 'Amplía el grafo anterior con instrumentos y resuelve consultas que combinan varios patrones y resultados agregados.',
@@ -103,7 +103,7 @@ window.LinkedLabModel = (() => {
       graphModelTitle: 'Ampliación: instrumentos como nodos',
       graphModelText: 'Cada instrumento es un recurso con tipo e identificador propios. Puede conectarse con varios músicos, aparecer en resultados y participar en recuentos.',
       graphInventory: counts => `Este grafo contiene ${counts.song} canciones · ${counts.musician} músicos · ${counts.instrument} instrumentos`,
-      sparqlRouteTitle: 'Ruta SPARQL: de patrones sencillos a consultas agregadas',
+      sparqlRouteTitle: 'Cuatro preguntas que combinan relaciones y recuentos',
       challengeRdfType: 'En SPARQL, “a” es una abreviatura de rdf:type.',
       beatlesKinds: { song: 'Canción', musician: 'Músico', instrument: 'Instrumento' },
       beatlesRelations: { performedBy: 'Interpretada por', plays: 'Toca' },
@@ -187,7 +187,7 @@ window.LinkedLabModel = (() => {
       challengeTitle: 'Beatles: songs and musicians',
       challengeText: 'Start with a simple graph: songs connect to the musicians who perform them. Practise SPARQL queries with a single pattern.',
       challengeIntro: 'Each “performed by” arrow expresses a relationship between a song and a musician.',
-      challengeRouteTitle: 'Basic SPARQL: find patterns in the graph',
+      challengeRouteTitle: 'Three questions about songs and musicians',
       challengeComplete: 'You queried types, the musicians on a song and the songs by a musician. You can now extend the graph with new resources and relationships.',
       moreBeatlesTitle: 'More Beatles: add instruments',
       moreBeatlesText: 'Extend the previous graph with instruments and solve queries that combine several patterns and aggregate results.',
@@ -195,7 +195,7 @@ window.LinkedLabModel = (() => {
       graphModelTitle: 'Extension: instruments as nodes',
       graphModelText: 'Each instrument is a resource with its own type and identifier. It can connect to several musicians, appear in results and take part in counts.',
       graphInventory: counts => `This graph contains ${counts.song} songs · ${counts.musician} musicians · ${counts.instrument} instruments`,
-      sparqlRouteTitle: 'SPARQL route: from simple patterns to aggregate queries',
+      sparqlRouteTitle: 'Four questions combining relationships and counts',
       challengeRdfType: 'In SPARQL, “a” is shorthand for rdf:type.',
       beatlesKinds: { song: 'Song', musician: 'Musician', instrument: 'Instrument' },
       beatlesRelations: { performedBy: 'Performed by', plays: 'Plays' },
@@ -285,8 +285,8 @@ window.LinkedLabModel = (() => {
     {
       id: 'basic-types',
       question: { es: '¿Qué tipos de recursos hay en el grafo?', en: 'Which resource types are in the graph?' },
-      concept: 'DISTINCT',
-      explanation: { es: 'El patrón “?entity a ?type” busca el tipo de cada recurso. DISTINCT elimina los tipos repetidos.', en: 'The “?entity a ?type” pattern finds each resource type. DISTINCT removes repeated types.' },
+      concept: { es: 'Tipos de recursos', en: 'Resource types' },
+      explanation: { es: 'Queremos obtener cada tipo una sola vez, aunque haya varios recursos del mismo tipo.', en: 'We want each type only once, even when several resources share that type.' },
       options: [
         'PREFIX s: <http://learningsparql.com/ns/schema/>\n\nSELECT DISTINCT ?type\nWHERE {\n  ?entity a ?type .\n}',
         'PREFIX s: <http://learningsparql.com/ns/schema/>\n\nSELECT DISTINCT ?type\nWHERE {\n  ?type a ?entity .\n}',
@@ -301,7 +301,7 @@ window.LinkedLabModel = (() => {
     {
       id: 'hey-jude-musicians',
       question: { es: '¿Qué músicos participaron en Hey Jude?', en: 'Which musicians performed on Hey Jude?' },
-      concept: { es: 'Un patrón', en: 'One pattern' },
+      concept: { es: 'Músicos de Hey Jude', en: 'Hey Jude musicians' },
       explanation: { es: 'Fijamos la canción y usamos ?musician como variable para encontrar todos los recursos conectados mediante “interpretada por”.', en: 'We fix the song and use ?musician as a variable to find every resource connected through “performed by”.' },
       options: [
         'PREFIX ex: <https://example.org/beatles/>\nPREFIX song: <http://learningsparql.com/ns/song/>\n\nSELECT ?musician\nWHERE {\n  ?musician ex:performedBy song:HeyJude .\n}',
@@ -317,7 +317,7 @@ window.LinkedLabModel = (() => {
     {
       id: 'paul-songs',
       question: { es: '¿En qué canciones aparece Paul McCartney?', en: 'Which songs feature Paul McCartney?' },
-      concept: { es: 'Recurso fijo', en: 'Fixed resource' },
+      concept: { es: 'Canciones de Paul', en: 'Paul’s songs' },
       explanation: { es: 'Ahora fijamos el músico como objeto y dejamos ?song como variable. El mismo patrón sirve para formular otra pregunta.', en: 'Now we fix the musician as the object and leave ?song as the variable. The same pattern answers a different question.' },
       options: [
         'PREFIX ex: <https://example.org/beatles/>\nPREFIX m: <http://learningsparql.com/ns/musician/>\n\nSELECT DISTINCT ?song\nWHERE {\n  m:PaulMcCartney ex:performedBy ?song .\n}',
@@ -336,8 +336,8 @@ window.LinkedLabModel = (() => {
     {
       id: 'hey-jude-instruments',
       question: { es: '¿Qué músicos participaron en Hey Jude y qué instrumentos toca cada uno?', en: 'Which musicians performed on Hey Jude and which instruments does each one play?' },
-      concept: { es: 'Dos saltos', en: 'Two hops' },
-      explanation: { es: 'La variable compartida ?musician une dos patrones: canción → músico y músico → instrumento.', en: 'The shared ?musician variable joins two patterns: song → musician and musician → instrument.' },
+      concept: { es: 'Músicos e instrumentos', en: 'Musicians and instruments' },
+      explanation: { es: 'La respuesta debe relacionar cada músico de Hey Jude con los instrumentos que toca. El mismo músico conecta ambas partes de la pregunta.', en: 'The answer must relate each Hey Jude musician to the instruments they play. The same musician connects both parts of the question.' },
       options: [
         'PREFIX ex: <https://example.org/beatles/>\nPREFIX song: <http://learningsparql.com/ns/song/>\n\nSELECT DISTINCT ?musician ?instrument\nWHERE {\n  ?musician ex:performedBy song:HeyJude .\n  ?instrument ex:plays ?musician .\n}',
         'PREFIX ex: <https://example.org/beatles/>\nPREFIX song: <http://learningsparql.com/ns/song/>\n\nSELECT DISTINCT ?musician ?instrument\nWHERE {\n  song:HeyJude ex:performedBy ?musician .\n  ?musician ex:plays ?instrument .\n}\nORDER BY ?musician ?instrument',
@@ -361,8 +361,8 @@ window.LinkedLabModel = (() => {
     {
       id: 'instrument-count',
       question: { es: '¿Qué instrumento está asociado a más músicos?', en: 'Which instrument is associated with the most musicians?' },
-      concept: 'GROUP BY',
-      explanation: { es: 'GROUP BY reúne las soluciones por instrumento; COUNT cuenta cuántos músicos distintos hay en cada grupo.', en: 'GROUP BY collects solutions by instrument; COUNT finds how many distinct musicians occur in each group.' },
+      concept: { es: 'Instrumento compartido', en: 'Shared instrument' },
+      explanation: { es: 'La respuesta debe mostrar un único instrumento junto con el número de músicos asociados y situar primero el valor mayor.', en: 'The answer must show one instrument together with its number of associated musicians and place the largest value first.' },
       options: [
         'PREFIX ex: <https://example.org/beatles/>\n\nSELECT ?instrument ?musician\nWHERE {\n  ?musician ex:plays ?instrument .\n}\nORDER BY ?instrument',
         'PREFIX ex: <https://example.org/beatles/>\n\nSELECT ?instrument (COUNT(?musician) AS ?musicians)\nWHERE {\n  ?musician ex:plays ?instrument .\n}\nORDER BY DESC(?musicians)\nLIMIT 1',
@@ -377,8 +377,8 @@ window.LinkedLabModel = (() => {
     {
       id: 'all-songs',
       question: { es: '¿Qué músico aparece en las tres canciones?', en: 'Which musician appears on all three songs?' },
-      concept: 'HAVING',
-      explanation: { es: 'HAVING filtra los grupos después del recuento: sólo conserva músicos asociados con al menos tres canciones.', en: 'HAVING filters groups after counting, retaining only musicians associated with at least three songs.' },
+      concept: { es: 'Músico en tres canciones', en: 'Musician on three songs' },
+      explanation: { es: 'Busca las canciones asociadas con cada músico y conserva únicamente quien aparezca en al menos tres canciones distintas.', en: 'Find the songs associated with each musician and retain only whoever appears on at least three distinct songs.' },
       options: [
         'PREFIX ex: <https://example.org/beatles/>\n\nSELECT ?musician (COUNT(DISTINCT ?song) AS ?songs)\nWHERE {\n  ?song ex:performedBy ?musician .\n}\nHAVING (COUNT(DISTINCT ?song) >= 3)',
         'PREFIX ex: <https://example.org/beatles/>\n\nSELECT ?musician (COUNT(DISTINCT ?song) AS ?songs)\nWHERE {\n  ?song ex:performedBy ?musician .\n}\nGROUP BY ?musician\nHAVING (COUNT(DISTINCT ?song) >= 3)\nORDER BY DESC(?songs)',
@@ -393,8 +393,8 @@ window.LinkedLabModel = (() => {
     {
       id: 'song-instrument-count',
       question: { es: '¿Cuántos instrumentos distintos están asociados a cada canción a través de sus músicos?', en: 'How many distinct instruments are associated with each song through its musicians?' },
-      concept: { es: 'Dos saltos + COUNT', en: 'Two hops + COUNT' },
-      explanation: { es: 'La consulta encadena canción → músico → instrumento y después agrupa por canción. Es una combinación de unión de patrones y agregación.', en: 'The query chains song → musician → instrument and then groups by song. It combines pattern joins with aggregation.' },
+      concept: { es: 'Instrumentos por canción', en: 'Instruments per song' },
+      explanation: { es: 'Para cada canción, hay que llegar a los instrumentos a través de sus músicos y obtener el número de instrumentos distintos.', en: 'For each song, reach its instruments through the musicians and obtain the number of distinct instruments.' },
       options: [
         'PREFIX ex: <https://example.org/beatles/>\n\nSELECT ?song (COUNT(DISTINCT ?musician) AS ?instruments)\nWHERE {\n  ?song ex:performedBy ?musician .\n}\nGROUP BY ?song\nORDER BY DESC(?instruments)',
         'PREFIX ex: <https://example.org/beatles/>\n\nSELECT ?song (COUNT(DISTINCT ?instrument) AS ?instruments)\nWHERE {\n  ?musician ex:performedBy ?song .\n  ?instrument ex:plays ?musician .\n}\nGROUP BY ?song\nORDER BY DESC(?instruments)',
