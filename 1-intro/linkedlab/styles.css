@@ -118,10 +118,10 @@ button:disabled{cursor:not-allowed;opacity:.45}
 .feedback.good{color:#13736c}.feedback.bad{color:#a23b3b}
 
 .rdf-grid{display:grid;grid-template-columns:minmax(310px,.78fr) minmax(0,1.22fr);gap:16px}
-.triple-table{width:100%;border-collapse:separate;border-spacing:0 7px;font-size:.74rem}
+.triple-table{width:100%;table-layout:fixed;border-collapse:separate;border-spacing:0 7px;font-size:.72rem}
 .triple-table th{text-align:left;padding:0 6px;color:var(--muted);font-size:.7rem;text-transform:uppercase;letter-spacing:.04em}
 .triple-table td{padding:9px 6px;background:white;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
-.triple-table code{white-space:nowrap}
+.triple-table code{white-space:normal;overflow-wrap:normal}
 .triple-table td:first-child{border-left:1px solid var(--line);border-radius:8px 0 0 8px}.triple-table td:last-child{border-right:1px solid var(--line);border-radius:0 8px 8px 0}
 .triple-table tr[data-triple]{cursor:pointer}.triple-table tr[data-triple]:hover td,.triple-table tr.active td{border-color:var(--teal);background:var(--teal-soft)}
 .code-card{border-radius:12px;background:#102945;color:#e8f3fb;padding:16px;overflow:auto;min-height:320px}

@@ -26,6 +26,7 @@
   const copy = () => model.copy[state.lang];
   const text = value => typeof value === 'string' ? value : value[state.lang];
   const escapeHtml = value => String(value).replace(/[&<>"]/g, character => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[character]);
+  const breakableTerm = value => escapeHtml(value).replace(/\^\^/g, '<wbr>^^<wbr>').replace(/:/g, ':<wbr>').replace(/\//g, '/<wbr>');
   const nodeById = id => model.nodes.find(node => node.id === id);
   const edgeById = id => model.edges.find(edge => edge.id === id);
   const extractedEdges = () => model.edges.filter(edge => edge.extracted);
@@ -229,7 +230,7 @@
     const c = copy();
     const rows = extractedEdges().map(edge => {
       const triple = tripleForEdge(edge).map(term);
-      return `<tr data-triple="${edge.id}" class="${state.selectedTriple === edge.id ? 'active' : ''}"><td><code>${escapeHtml(triple[0])}</code></td><td><code>${escapeHtml(triple[1])}</code></td><td><code>${escapeHtml(triple[2])}</code></td></tr>`;
+      return `<tr data-triple="${edge.id}" class="${state.selectedTriple === edge.id ? 'active' : ''}"><td><code>${breakableTerm(triple[0])}</code></td><td><code>${breakableTerm(triple[1])}</code></td><td><code>${breakableTerm(triple[2])}</code></td></tr>`;
     }).join('');
     const turtle = turtleLines();
     const code = [
