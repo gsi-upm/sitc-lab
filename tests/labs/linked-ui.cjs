@@ -15,7 +15,7 @@ const url = process.env.LINKED_URL || 'http://127.0.0.1:4180/1-intro/linkedlab/'
       page.on('pageerror', error => errors.push(error.message));
       await page.goto(url);
       await page.locator('[data-step="0"]').waitFor();
-      assert.equal(await page.locator('.tabs button').count(), 7);
+      assert.equal(await page.locator('.tabs button').count(), 8);
 
       await page.click('#transform');
       assert.equal(await page.locator('.knowledge-graph .node').count(), 6);
@@ -55,16 +55,34 @@ const url = process.env.LINKED_URL || 'http://127.0.0.1:4180/1-intro/linkedlab/'
 
       await page.click('[data-step="6"]');
       assert.equal(await page.locator('#next').isEnabled(), false);
-      assert.equal(await page.locator('.beatles-node').count(), 12);
-      assert.equal(await page.locator('.beatles-edge').count(), 17);
-      assert.equal(await page.locator('.advanced-graph-intro').count(), 1);
-      for (const [question, answer] of [0, 1, 2, 3, 4].map((question, index) => [question, [0, 1, 2, 1, 2][index]])) {
+      assert.equal(await page.locator('.beatles-node').count(), 7);
+      assert.equal(await page.locator('.beatles-edge').count(), 9);
+      assert.equal(await page.locator('.beatles-graph-intro').count(), 0);
+      assert.equal(await page.locator('.beatles-node.musician > text:not(.node-type) tspan').count(), 8);
+      for (const [question, answer] of [0, 1, 2].map((question, index) => [question, [0, 1, 2][index]])) {
         await page.click(`[data-beatles-question="${question}"]`);
         await page.click(`[data-beatles-choice="${answer}"]`);
         await page.click('#check-beatles');
         assert.equal(await page.locator('.beatles-answer.revealed').count(), 1);
       }
-      assert.equal(await page.locator('.beatles-question-tabs .solved').count(), 5);
+      assert.equal(await page.locator('.beatles-question-tabs .solved').count(), 3);
+      assert.equal(await page.locator('#next').isEnabled(), true);
+      await page.click('#next');
+
+      assert.equal(await page.locator('[data-step="7"].active').count(), 1);
+      assert.equal(await page.locator('#next').isEnabled(), false);
+      assert.equal(await page.locator('.beatles-node').count(), 12);
+      assert.equal(await page.locator('.beatles-edge').count(), 17);
+      assert.equal(await page.locator('.beatles-graph-intro').count(), 1);
+      assert.match(await page.locator('.graph-inventory').innerText(), /3 canciones · 4 músicos · 5 instrumentos/);
+      assert.equal(await page.locator('.graph-inventory button').count(), 0);
+      for (const [question, answer] of [0, 1, 2, 3].map((question, index) => [question, [1, 2, 1, 2][index]])) {
+        await page.click(`[data-beatles-question="${question}"]`);
+        await page.click(`[data-beatles-choice="${answer}"]`);
+        await page.click('#check-beatles');
+        assert.equal(await page.locator('.beatles-answer.revealed').count(), 1);
+      }
+      assert.equal(await page.locator('.beatles-question-tabs .solved').count(), 4);
       assert.equal(await page.locator('#next').isEnabled(), true);
       await page.click('#next');
       assert.equal(await page.locator('#next').isEnabled(), false);

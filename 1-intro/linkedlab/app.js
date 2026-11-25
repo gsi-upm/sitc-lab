@@ -17,6 +17,7 @@
     external: false,
     classification: null,
     beatlesQuestion: 0,
+    moreBeatlesQuestion: 0,
     beatlesAnswers: {},
     beatlesChecked: {},
     beatlesSolved: [],
@@ -343,8 +344,10 @@
     </div>`;
   }
 
-  function beatlesGraphSVG(question, reveal) {
+  function beatlesGraphSVG(question, reveal, advanced = false) {
     const c = copy();
+    const graphNodes = advanced ? model.beatlesNodes : model.beatlesNodes.filter(node => node.kind !== 'instrument');
+    const graphEdges = advanced ? model.beatlesEdges : model.beatlesEdges.filter(edge => edge.kind === 'performedBy');
     const activeEdges = reveal ? question.activeEdges : [];
     const explicitNodes = new Set(reveal ? question.activeNodes : []);
     const edgeNodes = new Set(activeEdges.flatMap(id => {
@@ -354,75 +357,90 @@
     const focus = activeEdges.length > 0 || explicitNodes.size > 0;
     const nodeByBeatlesId = id => model.beatlesNodes.find(node => node.id === id);
     const colours = { performedBy: '#c62977', plays: '#169c91' };
-    const edgeMarkup = model.beatlesEdges.map(edge => {
+    const edgeMarkup = graphEdges.map(edge => {
       const source = nodeByBeatlesId(edge.source);
       const target = nodeByBeatlesId(edge.target);
       const active = activeEdges.includes(edge.id);
       const dim = focus && !active;
       const colour = colours[edge.kind];
-      const sourceRadius = source.kind === 'song' ? 74 : source.kind === 'musician' ? 46 : 64;
-      const targetRadius = target.kind === 'song' ? 74 : target.kind === 'musician' ? 46 : 64;
+      const sourceRadius = source.kind === 'song' ? 74 : source.kind === 'musician' ? 50 : 64;
+      const targetRadius = target.kind === 'song' ? 74 : target.kind === 'musician' ? 50 : 64;
       const startX = source.x + sourceRadius;
       const endX = target.x - targetRadius;
       const middleX = (startX + endX) / 2;
       const path = `M ${startX} ${source.y} C ${middleX} ${source.y}, ${middleX} ${target.y}, ${endX} ${target.y}`;
       return `<path class="beatles-edge${active ? ' active' : ''}${dim ? ' dim' : ''}" data-beatles-edge="${edge.id}" d="${path}" style="--edge-colour:${colour}" marker-end="url(#beatles-${edge.kind})"><title>${escapeHtml(edge.predicate)}</title></path>`;
     }).join('');
-    const nodeMarkup = model.beatlesNodes.map(node => {
+    const nodeMarkup = graphNodes.map(node => {
       const active = explicitNodes.has(node.id) || edgeNodes.has(node.id);
       const dim = focus && !active;
       const kind = c.beatlesKinds[node.kind];
       const label = text(node.label);
       const shape = node.kind === 'musician'
-        ? `<circle cx="${node.x}" cy="${node.y}" r="42"></circle>`
+        ? `<circle cx="${node.x}" cy="${node.y}" r="46"></circle>`
         : node.kind === 'song'
           ? `<rect x="${node.x - 72}" y="${node.y - 28}" width="144" height="56" rx="13"></rect>`
           : `<rect x="${node.x - 62}" y="${node.y - 24}" width="124" height="48" rx="24"></rect>`;
+      const labelMarkup = node.kind === 'musician'
+        ? label.split(' ').map((part, index) => `<tspan x="${node.x}" y="${node.y - 9 + index * 14}">${escapeHtml(part)}</tspan>`).join('')
+        : escapeHtml(label);
+      const labelY = node.kind === 'musician' ? node.y : node.y + 2;
+      const typeY = node.kind === 'musician' ? node.y + 25 : node.y + 17;
       return `<g class="beatles-node ${node.kind}${active ? ' active' : ''}${dim ? ' dim' : ''}" data-beatles-node="${node.id}" role="img" aria-label="${escapeHtml(`${label}, ${kind}`)}">
         <title>${escapeHtml(node.uri)}</title>${shape}
-        <text x="${node.x}" y="${node.y + 2}">${escapeHtml(label)}</text>
-        <text class="node-type" x="${node.x}" y="${node.y + 17}">${escapeHtml(kind)}</text>
+        <text x="${node.x}" y="${labelY}">${labelMarkup}</text>
+        <text class="node-type" x="${node.x}" y="${typeY}">${escapeHtml(kind)}</text>
       </g>`;
     }).join('');
-    return `<svg class="beatles-graph" viewBox="0 0 980 485" role="img" aria-label="${escapeHtml(c.challengeTitle)}">
+    return `<svg class="beatles-graph" viewBox="0 0 ${advanced ? 980 : 620} 485" role="img" aria-label="${escapeHtml(advanced ? c.moreBeatlesTitle : c.challengeTitle)}">
       <defs>${Object.entries(colours).map(([name, colour]) => `<marker id="beatles-${name}" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10Z" fill="${colour}"></path></marker>`).join('')}</defs>
       ${edgeMarkup}${nodeMarkup}
     </svg>`;
   }
 
-  function renderChallenge() {
+  function renderChallenge(advanced = false) {
     const c = copy();
-    const question = model.beatlesQuestions[state.beatlesQuestion];
+    const questions = advanced ? model.moreBeatlesQuestions : model.beatlesQuestions;
+    const questionIndex = advanced ? state.moreBeatlesQuestion : state.beatlesQuestion;
+    const question = questions[questionIndex];
     const answer = state.beatlesAnswers[question.id];
     const checked = Boolean(state.beatlesChecked[question.id]);
     const solved = state.beatlesSolved.includes(question.id);
     const selectedCode = answer === undefined ? '' : question.options[answer];
-    const progress = state.beatlesSolved.length;
-    const questionTabs = model.beatlesQuestions.map((item, index) => `<button data-beatles-question="${index}" class="${state.beatlesQuestion === index ? 'active' : ''} ${state.beatlesSolved.includes(item.id) ? 'solved' : ''}"><span>${index + 1}</span><b>${escapeHtml(text(item.concept))}</b>${state.beatlesSolved.includes(item.id) ? '<i>✓</i>' : ''}</button>`).join('');
+    const progress = questions.filter(item => state.beatlesSolved.includes(item.id)).length;
+    const questionTabs = questions.map((item, index) => `<button data-beatles-question="${index}" class="${questionIndex === index ? 'active' : ''} ${state.beatlesSolved.includes(item.id) ? 'solved' : ''}"><span>${index + 1}</span><b>${escapeHtml(text(item.concept))}</b>${state.beatlesSolved.includes(item.id) ? '<i>✓</i>' : ''}</button>`).join('');
     const choices = question.options.map((option, index) => `<button data-beatles-choice="${index}" class="${answer === index ? 'active' : ''}${checked && answer === index ? index === question.correct ? ' correct' : ' wrong' : ''}" aria-label="${c.challengeChoose} ${String.fromCharCode(65 + index)}">${String.fromCharCode(65 + index)}</button>`).join('');
     const resultTable = solved ? `<table class="results beatles-results"><thead><tr>${question.columns.map(column => `<th>?${escapeHtml(column)}</th>`).join('')}</tr></thead><tbody>${question.rows.map(row => `<tr>${row.map(value => `<td><code>${escapeHtml(value)}</code></td>`).join('')}</tr>`).join('')}</tbody></table>` : '';
     const feedback = solved ? c.challengeCorrect : checked ? c.challengeWrong : '';
     const conclusions = c.conclusions.map(([title, description]) => `<article class="conclusion"><h4>${escapeHtml(title)}</h4><p>${escapeHtml(description)}</p></article>`).join('');
-    const kindSummary = Object.entries(c.beatlesKinds).map(([kind, label]) => `<span class="${kind}"><b>${model.beatlesNodes.filter(node => node.kind === kind).length}</b>${escapeHtml(label)}</span>`).join('');
+    const graphCounts = model.beatlesNodes.reduce((counts, node) => ({ ...counts, [node.kind]: counts[node.kind] + 1 }), { song: 0, musician: 0, instrument: 0 });
+    const title = advanced ? c.moreBeatlesTitle : c.challengeTitle;
+    const definition = advanced ? c.moreBeatlesText : c.challengeText;
+    const intro = advanced ? c.moreBeatlesIntro : c.challengeIntro;
+    const routeTitle = advanced ? c.sparqlRouteTitle : c.challengeRouteTitle;
+    const completeMessage = advanced ? c.moreBeatlesComplete : c.challengeComplete;
+    const allBasicSolved = model.beatlesQuestions.every(item => state.beatlesSolved.includes(item.id));
+    const allAdvancedSolved = model.moreBeatlesQuestions.every(item => state.beatlesSolved.includes(item.id));
     return `<div class="stage">
-      ${guide(6, c.challengeText)}
+      ${guide(advanced ? 7 : 6, definition)}
       <div class="workspace">
-        <div class="workspace-head beatles-head"><div><h3>${c.challengeTitle}</h3><p>${c.challengeIntro}</p></div><span class="stat">${c.challengeProgress(progress)}</span></div>
-        <section class="advanced-graph-intro">
-          <div><h4>${c.advancedGraphTitle}</h4><p>${c.advancedGraphText}</p></div>
-          <div class="kind-summary">${kindSummary}</div>
-        </section>
+        <div class="workspace-head beatles-head"><div><h3>${title}</h3><p>${intro}</p></div><span class="stat">${c.challengeProgress(progress, questions.length)}</span></div>
+        ${advanced ? `<section class="beatles-graph-intro">
+          <h4>${c.graphModelTitle}</h4>
+          <p>${c.graphModelText}</p>
+          <p class="graph-inventory">${c.graphInventory(graphCounts)}</p>
+        </section>` : ''}
         <section class="panel beatles-graph-panel">
-          ${beatlesGraphSVG(question, solved)}
-          <div class="beatles-legend">${Object.entries(c.beatlesRelations).map(([id, label]) => `<span><i class="${id}"></i>${escapeHtml(label)}</span>`).join('')}</div>
+          ${beatlesGraphSVG(question, solved, advanced)}
+          <div class="beatles-legend">${Object.entries(c.beatlesRelations).filter(([id]) => advanced || id === 'performedBy').map(([id, label]) => `<span><i class="${id}"></i>${escapeHtml(label)}</span>`).join('')}</div>
         </section>
-        <h4 class="sparql-route-title">${c.sparqlRouteTitle}</h4>
+        <h4 class="sparql-route-title">${routeTitle}</h4>
         <div class="beatles-question-tabs">${questionTabs}</div>
         <section class="panel beatles-question">
-          <div class="panel-title"><span>${escapeHtml(text(question.concept))}</span><span>${state.beatlesQuestion + 1}/${model.beatlesQuestions.length}</span></div>
+          <div class="panel-title"><span>${escapeHtml(text(question.concept))}</span><span>${questionIndex + 1}/${questions.length}</span></div>
           <h4>${escapeHtml(text(question.question))}</h4>
           <p class="beatles-explanation">${escapeHtml(text(question.explanation))}</p>
-          ${question.id === 'types' ? `<p class="beatles-hint">${c.challengeRdfType}</p>` : ''}
+          ${question.id === 'basic-types' ? `<p class="beatles-hint">${c.challengeRdfType}</p>` : ''}
           <div class="beatles-query-grid">
             <div>
               <div class="beatles-choice-head"><span>${c.challengeChoose}</span><div class="beatles-choice-buttons">${choices}</div></div>
@@ -437,13 +455,13 @@
           </div>
         </section>
         <p class="source-note"><a href="https://github.com/gsi-upm/sitc/blob/master/lod/01_SPARQL_Introduction.ipynb" target="_blank" rel="noopener">${c.challengeSource}</a>.</p>
-        ${progress === model.beatlesQuestions.length ? `<div class="challenge-complete"><strong>${c.challengeComplete}</strong></div><h3>${c.conclusionsTitle}</h3><div class="conclusions">${conclusions}</div>` : ''}
+        ${progress === questions.length ? `<div class="challenge-complete"><strong>${completeMessage}</strong></div>${advanced && allBasicSolved && allAdvancedSolved ? `<h3>${c.conclusionsTitle}</h3><div class="conclusions">${conclusions}</div>` : ''}` : ''}
       </div>
     </div>`;
   }
 
   function renderContent() {
-    const renderers = [renderExtraction, renderGraphMeaning, renderRdf, renderUris, renderSparql, renderLinked, renderChallenge];
+    const renderers = [renderExtraction, renderGraphMeaning, renderRdf, renderUris, renderSparql, renderLinked, () => renderChallenge(false), () => renderChallenge(true)];
     $('#content').innerHTML = renderers[state.step]();
     bindStepEvents();
   }
@@ -482,16 +500,24 @@
     $$('[data-query]').forEach(button => button.addEventListener('click', () => { state.queryIndex = Number(button.dataset.query); state.queryRan = false; renderContent(); }));
     $('#run-query')?.addEventListener('click', () => { state.queryRan = true; renderContent(); });
     $('#toggle-external')?.addEventListener('click', () => { state.external = !state.external; renderContent(); });
-    $$('[data-beatles-question]').forEach(button => button.addEventListener('click', () => { state.beatlesQuestion = Number(button.dataset.beatlesQuestion); renderContent(); }));
+    $$('[data-beatles-question]').forEach(button => button.addEventListener('click', () => {
+      if (state.step === 7) state.moreBeatlesQuestion = Number(button.dataset.beatlesQuestion);
+      else state.beatlesQuestion = Number(button.dataset.beatlesQuestion);
+      renderContent();
+    }));
     $$('[data-beatles-choice]').forEach(button => button.addEventListener('click', () => {
-      const question = model.beatlesQuestions[state.beatlesQuestion];
+      const questions = state.step === 7 ? model.moreBeatlesQuestions : model.beatlesQuestions;
+      const questionIndex = state.step === 7 ? state.moreBeatlesQuestion : state.beatlesQuestion;
+      const question = questions[questionIndex];
       if (state.beatlesSolved.includes(question.id)) return;
       state.beatlesAnswers[question.id] = Number(button.dataset.beatlesChoice);
       state.beatlesChecked[question.id] = false;
       renderContent();
     }));
     $('#check-beatles')?.addEventListener('click', () => {
-      const question = model.beatlesQuestions[state.beatlesQuestion];
+      const questions = state.step === 7 ? model.moreBeatlesQuestions : model.beatlesQuestions;
+      const questionIndex = state.step === 7 ? state.moreBeatlesQuestion : state.beatlesQuestion;
+      const question = questions[questionIndex];
       state.beatlesChecked[question.id] = true;
       if (state.beatlesAnswers[question.id] === question.correct && !state.beatlesSolved.includes(question.id)) state.beatlesSolved.push(question.id);
       state.completed = false;
@@ -511,8 +537,10 @@
     const next = $('#next');
     previous.textContent = c.previous;
     previous.disabled = state.step === 0;
-    next.textContent = state.step === 6 ? c.finish : c.next;
-    next.disabled = state.step === 6 && (state.beatlesSolved.length !== model.beatlesQuestions.length || state.completed);
+    const basicSolved = model.beatlesQuestions.every(question => state.beatlesSolved.includes(question.id));
+    const advancedSolved = model.moreBeatlesQuestions.every(question => state.beatlesSolved.includes(question.id));
+    next.textContent = state.step === 7 ? c.finish : c.next;
+    next.disabled = (state.step === 6 && !basicSolved) || (state.step === 7 && (!basicSolved || !advancedSolved || state.completed));
     $('#step-count').textContent = c.stepCount(state.step + 1);
   }
 
@@ -532,8 +560,9 @@
   $('#language').addEventListener('change', event => { state.lang = event.target.value; render(); });
   $('#previous').addEventListener('click', () => { if (state.step > 0) { state.step -= 1; state.activeEdges = []; state.selectedNode = null; render(); } });
   $('#next').addEventListener('click', () => {
-    if (state.step < 6) { state.step += 1; state.activeEdges = []; state.selectedNode = null; render(); window.scrollTo({ top: $('#tabs').offsetTop - 10, behavior: 'smooth' }); }
-    else if (state.beatlesSolved.length === model.beatlesQuestions.length) { state.completed = true; render(); }
+    const allBeatlesSolved = [...model.beatlesQuestions, ...model.moreBeatlesQuestions].every(question => state.beatlesSolved.includes(question.id));
+    if (state.step < 7) { state.step += 1; state.activeEdges = []; state.selectedNode = null; render(); window.scrollTo({ top: $('#tabs').offsetTop - 10, behavior: 'smooth' }); }
+    else if (allBeatlesSolved) { state.completed = true; render(); }
   });
 
   render();

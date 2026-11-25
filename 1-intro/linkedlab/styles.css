@@ -164,8 +164,8 @@ pre{margin:0;white-space:pre-wrap;overflow-wrap:anywhere;font:500 .85rem/1.7 "DM
 .principle span{font-size:.88rem;color:var(--muted)}
 
 .beatles-head p{max-width:660px}.beatles-head .stat{flex:0 0 auto}
-.advanced-graph-intro{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:18px;align-items:center;margin:0 0 13px;padding:14px 16px;border-left:5px solid var(--orange);border-radius:0 12px 12px 0;background:var(--orange-soft)}
-.advanced-graph-intro h4{margin:0 0 4px;color:#7e431c}.advanced-graph-intro p{margin:0;color:#6d5749;font-size:.88rem;line-height:1.5}.kind-summary{display:flex;gap:7px;flex-wrap:wrap;justify-content:flex-end}.kind-summary span{display:flex;align-items:center;gap:5px;padding:6px 9px;border:1px solid var(--line);border-radius:999px;background:white;color:var(--muted);font-size:.78rem;font-weight:750}.kind-summary b{color:var(--ink)}.kind-summary .instrument{border-color:#e6ad78;background:#fff9f2}.sparql-route-title{margin:17px 0 7px;color:var(--ink)}
+.beatles-graph-intro{margin:0 0 13px;padding:14px 16px;border-left:5px solid var(--blue);border-radius:0 12px 12px 0;background:var(--blue-soft)}
+.beatles-graph-intro h4{margin:0 0 4px;color:#315b83}.beatles-graph-intro p{margin:0;color:#49677f;font-size:.88rem;line-height:1.5}.beatles-graph-intro .graph-inventory{margin-top:7px;color:var(--ink);font-weight:800}.sparql-route-title{margin:17px 0 7px;color:var(--ink)}
 .beatles-graph-panel{padding:10px 14px 12px;background:linear-gradient(180deg,#fbfdff,#f4f8fb)}
 .beatles-graph{display:block;width:100%;height:auto;min-height:410px}
 .beatles-edge{fill:none;stroke:var(--edge-colour);stroke-width:2.2;opacity:.52;transition:.2s ease}
@@ -205,7 +205,7 @@ footer{padding:28px 16px;text-align:center;color:var(--muted);font-size:.82rem}f
 
 @media(max-width:900px){
   .stage{grid-template-columns:1fr}.guide{position:static}.split-demo,.rdf-grid,.sparql-grid{grid-template-columns:1fr}
-  .graph-wrap,.knowledge-graph{min-height:360px}.identity-flow{grid-template-columns:1fr}.identity-card:not(:last-child)::after{display:none}.beatles-query-grid{grid-template-columns:1fr}.kg-parts{grid-template-columns:1fr}.advanced-graph-intro{grid-template-columns:1fr}.kind-summary{justify-content:flex-start}
+  .graph-wrap,.knowledge-graph{min-height:360px}.identity-flow{grid-template-columns:1fr}.identity-card:not(:last-child)::after{display:none}.beatles-query-grid{grid-template-columns:1fr}.kg-parts{grid-template-columns:1fr}
 }
 @media(max-width:680px){
   main{width:min(100% - 20px,1180px);padding-top:28px}h1{font-size:2.3rem}.intro{padding-bottom:18px}
